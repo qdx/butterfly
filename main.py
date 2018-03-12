@@ -63,28 +63,6 @@ def plotter(init_pos, duration, goal):
         view.write('-----------------------------------------------------------------------------------------\n')
 
 
-def future_plotter(init_pos, duration):
-    global current_state
-    with open('fut', 'a') as view:
-        current_state['pos'] = init_pos
-        view.write((' ' * (init_pos - 1 + duration * current_state['velocity']))  + 'o\n')
-        view.flush()
-        start_time = time.time()
-        prev_time = start_time
-        cur_time = start_time
-        while cur_time < start_time + duration:
-            cur_time = time.time()
-            if cur_time - prev_time < 0.1:
-                sleep(0.8)
-            elif cur_time - prev_time > 0.99:
-                seconds_passed += 1
-                future_from_now = int(duration - seconds_passed)
-                view.write((' ' * (current_state['pos'] + future_from_now * current_state['velocity']))  + 'o\n')
-                view.flush()
-                prev_time = cur_time
-        view.write('-----------------------------------------------------------------------------------------\n')
-        view.write('-----------------------------------------------------------------------------------------\n')
-
 
 while True:
     text = raw_input("command> ")
