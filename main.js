@@ -1,6 +1,7 @@
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
 
+var friction = 0.001;
 var state = {
   'pos_x': 10,
   'pos_y': 200,
@@ -26,10 +27,11 @@ a_y = 0.1;
 field_width = canvas.width;
 field_height = canvas.height;
 radius = 5;
-game_length = 600;
+game_length = 6000000;
 game_time = 6000;
 current_game_tick = 0;
 state_history = {};
+ending_tick = 0;
 
 game_started = false;
 start_time = 0;
@@ -112,47 +114,73 @@ function keyDownHandler(e){
     moves[e.code] = true;
   }
   //if(paused){
-    switch(e.code){
-      case "ArrowUp":
-        state['a_y'] -= 0.01;
-        break;
-      case "ArrowDown":
-        state['a_y'] += 0.01;
-        break;
-      case "ArrowLeft":
-        state['a_x'] -= 0.01;
-        break;
-      case "ArrowRight":
-        state['a_x'] += 0.01;
-        break;
-    }
-    //switch(e.code){
-      //case "ArrowUp":
-        //state['v_y'] -= 0.1;
-        //break;
-      //case "ArrowDown":
-        //state['v_y'] += 0.1;
-        //break;
-      //case "ArrowLeft":
-        //state['v_x'] -= 0.1;
-        //break;
-      //case "ArrowRight":
-        //state['v_x'] += 0.1;
-        //break;
-    //}
-      var state_copy = root_clone(state);
-      state_history[current_game_tick] = state;
-      for(var i = current_game_tick ; i < game_length ; i ++){
-        state_copy = physics_engine_step(state_copy, undefined);
-        state_history[i] = state_copy;
-      }
+  switch(e.code){
+    case "ArrowUp":
+      state['a_y'] -= 0.01;
+      break;
+    case "ArrowDown":
+      state['a_y'] += 0.01;
+      break;
+    case "ArrowLeft":
+      state['a_x'] -= 0.01;
+      break;
+    case "ArrowRight":
+      state['a_x'] += 0.01;
+      break;
+  }
+  //switch(e.code){
+  //case "ArrowUp":
+  //state['v_y'] -= 0.1;
+  //break;
+  //case "ArrowDown":
+  //state['v_y'] += 0.1;
+  //break;
+  //case "ArrowLeft":
+  //state['v_x'] -= 0.1;
+  //break;
+  //case "ArrowRight":
+  //state['v_x'] += 0.1;
+  //break;
+  //}
+  state_prediction();
   //}
 }
 
 function keyUpHandler(e){
   if(e.code in moves){
     moves[e.code] = false;
+    switch(e.code){
+      case "ArrowUp":
+        state['a_y'] = 0;
+        break;
+      case "ArrowDown":
+        state['a_y'] = 0;
+        break;
+      case "ArrowLeft":
+        state['a_x'] = 0;
+        break;
+      case "ArrowRight":
+        state['a_x'] = 0;
+        break;
+    }
+    state_prediction();
   }
+}
+
+function state_prediction(){
+  var state_copy = root_clone(state);
+  state_history[current_game_tick] = state;
+  var i = current_game_tick;
+  while((Math.abs(state_copy['v_x']) > 0.003 || Math.abs(state_copy['v_y']) > 0.003) && i < game_length){
+    state_copy = physics_engine_step(state_copy, undefined);
+    state_history[i] = state_copy;
+    i++;
+  }
+  ending_tick = i - 1;
+  //for(var i = current_game_tick ; i < game_length ; i ++){
+    //state_copy = physics_engine_step(state_copy, undefined);
+    //state_history[i] = state_copy;
+  //}
 }
 
 function drawCircle(){
@@ -220,23 +248,20 @@ function renderer(state){
 function mainLoop(){
   if(!game_started){
     game_started = true;
-    var state_copy = root_clone(state);
-    state_history[0] = state;
-    for(var i = 1 ; i < game_length ; i ++){
-      state_copy = physics_engine_step(state_copy, undefined);
-      state_history[i] = state_copy;
-    }
+    state_prediction();
   }
   if(!paused){
     if(current_game_tick < game_length){
       //if(current_game_tick < game_length / 2){
-        //if(game_length - current_game_tick in state_history){
-          //state['f_pos_x'] = state_history[game_length - current_game_tick]['pos_x'];
-          //state['f_pos_y'] = state_history[game_length - current_game_tick]['pos_y'];
-        //}
+      //if(game_length - current_game_tick in state_history){
+      //state['f_pos_x'] = state_history[game_length - current_game_tick]['pos_x'];
+      //state['f_pos_y'] = state_history[game_length - current_game_tick]['pos_y'];
       //}
-      state['f_pos_x'] = state_history[game_length - 1]['pos_x'];
-      state['f_pos_y'] = state_history[game_length - 1]['pos_y'];
+      //}
+      //console.log(state_history);
+      //console.log(state_history.length);
+      state['f_pos_x'] = state_history[ending_tick]['pos_x'];
+      state['f_pos_y'] = state_history[ending_tick]['pos_y'];
       state = physics_engine_step(state, undefined);
       renderer(state);
       current_game_tick += 1;
@@ -263,6 +288,16 @@ function physics_engine_step(state, renderer){
   state_copy['pos_y'] += state_copy['v_y'];
   state_copy['v_x'] += state_copy['a_x'];
   state_copy['v_y'] += state_copy['a_y'];
+  state_copy['v_x'] > 0 ? state_copy['v_x'] -= friction : state_copy['v_x'] += friction;
+  state_copy['v_y'] > 0 ? state_copy['v_y'] -= friction : state_copy['v_y'] += friction;
+  //console.log(state_copy['v_x']);
+  //console.log(state_copy['v_y']);
+  if(Math.abs(state_copy['v_x']) <= 0.003){
+    state_copy['v_x'] = 0;
+  }
+  if(Math.abs(state_copy['v_y']) <= 0.003){
+    state_copy['v_y'] = 0;
+  }
 
   //collision
   if(state_copy['pos_x'] <= state_copy['radius']
