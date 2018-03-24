@@ -10,9 +10,16 @@ game_started = false;
 paused = false;
 pause_start_at = 0;
 total_paused = 0;
+game_ended = false;
+game_end_with_status = '';
+
+GAME_WON_STATUS = 'win';
+GAME_LOST_STATUS = 'lost';
+IN_GAME_STATUS = 'in_game';
 
 var friction = 0.001;
 var acceleration = 0.03;
+var fuel_efficiency = 5;
 var state = {
   'pos_x': 10,
   'pos_y': 200,
@@ -21,6 +28,7 @@ var state = {
   'f_pos_x': 0,
   'f_pos_y': 0,
   'radius': 5,
+  'win_dist': 15,
   'v_x': 1,
   'v_y': 1,
   'a_x': 0,
@@ -81,6 +89,15 @@ function render_time_bar(ctx, time_bar){
   ctx.closePath();
 }
 
+function render_game_end(ctx, status){
+  var ending_text = 'You Win!';
+  if(status == GAME_LOST_STATUS){
+    ending_text = 'You lost!';
+  }
+  ctx.font = "30px Arial";
+  ctx.fillText(ending_text, canvas.width / 2, canvas.height / 2);
+}
+
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -96,21 +113,25 @@ var moves = {
 function keyDownHandler(e){
   if(e.code in moves){
     moves[e.code] = true;
-    switch(e.code){
-      case "ArrowUp":
-        state['a_y'] -= acceleration;
-        break;
-      case "ArrowDown":
-        state['a_y'] += acceleration;
-        break;
-      case "ArrowLeft":
-        state['a_x'] -= acceleration;
-        break;
-      case "ArrowRight":
-        state['a_x'] += acceleration;
-        break;
+    if(fuel_bar['fill'] >= fuel_efficiency){
+      switch(e.code){
+        case "ArrowUp":
+          state['a_y'] -= acceleration;
+          break;
+        case "ArrowDown":
+          state['a_y'] += acceleration;
+          break;
+        case "ArrowLeft":
+          state['a_x'] -= acceleration;
+          break;
+        case "ArrowRight":
+          state['a_x'] += acceleration;
+          break;
+      }
+      fuel_bar['fill'] -= fuel_efficiency;
+    }else{
+      fuel_bar['fill'] = 0;
     }
-    fuel_bar['fill'] - 1;
     state_prediction();
   }
 }
@@ -134,6 +155,11 @@ function keyUpHandler(e){
     }
     state_prediction();
   }
+}
+
+var min_velocity = 0.003;
+function check_stopped(state){
+  return Math.abs(state['v_x']) <= min_velocity && Math.abs(state['v_y']) <= min_velocity;
 }
 
 function state_prediction(){
@@ -177,10 +203,33 @@ function renderer(state){
   ctx.beginPath();
   ctx.setLineDash([]);
   ctx.strokeStyle = 'red';
-  ctx.arc(state['t_pos_x'], state['t_pos_y'], state['radius'] + 5, 0, 2*Math.PI);
+  ctx.arc(state['t_pos_x'], state['t_pos_y'], state['radius']*2, 0, 2*Math.PI);
   ctx.stroke();
   ctx.closePath();
+
+  if(game_ended){
+    render_game_end(ctx, game_end_with_status);
+  }
   ctx.restore();
+}
+
+function check_game_end(state){
+  var dist_to_goal = Math.sqrt(Math.pow(state['pos_x'] - state['t_pos_x'], 2) + Math.pow(state['pos_y'] - state['t_pos_y'], 2));
+  if(current_game_tick >= game_length){
+    if(dist_to_goal > state['win_dist']){
+      return GAME_LOST_STATUS;
+    }else{
+      return GAME_WON_STATUS;
+    }
+  }else{
+    if(check_stopped(state)  && dist_to_goal <= state['win_dist']){
+      return GAME_WON_STATUS;
+    }else if(check_stopped(state) && fuel_bar['fill'] < fuel_efficiency){
+      return GAME_LOST_STATUS;
+    }else{
+      return IN_GAME_STATUS;
+    }
+  }
 }
 
 function mainLoop(){
@@ -188,7 +237,8 @@ function mainLoop(){
     game_started = true;
     state_prediction();
   }
-  if(!paused){
+  var game_end_status = check_game_end(state);
+  if(game_end_status == IN_GAME_STATUS){
     if(current_game_tick < game_length){
       state['f_pos_x'] = state_history[ending_tick]['pos_x'];
       state['f_pos_y'] = state_history[ending_tick]['pos_y'];
@@ -196,6 +246,13 @@ function mainLoop(){
       renderer(state);
       current_game_tick += 1;
     }
+  }else{
+    game_ended = true;
+    game_end_with_status = game_end_status;
+    renderer(state);
+    //console.log(state);
+    //var dist_to_goal = Math.sqrt(Math.pow(state['pos_x'] - state['t_pos_x'],2) + Math.pow(state['pos_y'] - state['t_pos_y'],2));
+    //console.log(dist_to_goal);
   }
 }
 
