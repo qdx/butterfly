@@ -1,6 +1,10 @@
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
 
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+//document.addEventListener("keypress", keyPressHandler, false);
+
 game_length = 1000;
 current_game_tick = 0;
 state_history = {};
@@ -99,9 +103,6 @@ function render_game_end(ctx, status){
 }
 
 
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-//document.addEventListener("keypress", keyPressHandler, false);
 
 var moves = {
   "ArrowDown": false,
@@ -262,7 +263,6 @@ function mainLoop(){
   }
 }
 
-setInterval(mainLoop, 10);
 
 
 function root_clone(obj){
@@ -334,3 +334,9 @@ function physics_engine_step(state, renderer){
   update_time_bar();
   return state_copy;
 }
+
+
+var tjs = require('./Test.js');
+tjs.hello();
+
+setInterval(mainLoop, 10);

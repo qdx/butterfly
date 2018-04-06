@@ -1,5 +1,13 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+exports.hello = () => console.log('say hello to Test.js!');
+
+},{}],2:[function(require,module,exports){
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+//document.addEventListener("keypress", keyPressHandler, false);
 
 game_length = 1000;
 current_game_tick = 0;
@@ -99,9 +107,6 @@ function render_game_end(ctx, status){
 }
 
 
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-//document.addEventListener("keypress", keyPressHandler, false);
 
 var moves = {
   "ArrowDown": false,
@@ -262,7 +267,6 @@ function mainLoop(){
   }
 }
 
-setInterval(mainLoop, 10);
 
 
 function root_clone(obj){
@@ -334,3 +338,11 @@ function physics_engine_step(state, renderer){
   update_time_bar();
   return state_copy;
 }
+
+
+var tjs = require('./Test.js');
+tjs.hello();
+
+setInterval(mainLoop, 10);
+
+},{"./Test.js":1}]},{},[2])

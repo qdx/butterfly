@@ -1,0 +1,25 @@
+{
+  "name": "butterfly",
+  "version": "1.0.0",
+  "description": "A Game concept experimentation",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qdx/butterfly.git"
+  },
+  "author": "Dexin Qi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qdx/butterfly/issues"
+  },
+  "homepage": "https://github.com/qdx/butterfly#readme",
+  "devDependencies": {
+    "browserify": "^16.1.1",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-webserver": "^0.9.1"
+  }
+}
