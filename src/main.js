@@ -133,7 +133,6 @@ function keyDownHandler(e){
     }else{
       fuel_bar['fill'] = 0;
     }
-    state_prediction();
   }
 }
 
