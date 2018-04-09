@@ -335,8 +335,17 @@ function physics_engine_step(state, renderer){
   return state_copy;
 }
 
+console.log('start!');
 
 var tjs = require('./Test.js');
 tjs.hello();
+
+var GameObject = require('./GameObject.js');
+var go = new GameObject('name', 123);
+
+var CollisionDetector= require('./CollisionDetector.js');
+var cd = new CollisionDetector();
+console.log(CollisionDetector.NO_COLLISION);
+
 
 setInterval(mainLoop, 10);

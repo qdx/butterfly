@@ -19,7 +19,9 @@
   "devDependencies": {
     "browserify": "^16.1.1",
     "gulp": "^3.9.1",
-    "gulp-browserify": "^0.5.1",
-    "gulp-webserver": "^0.9.1"
+    "gulp-concat": "^2.6.1",
+    "gulp-webserver": "^0.9.1",
+    "rimraf": "^2.6.2",
+    "vinyl-source-stream": "^2.0.0"
   }
 }
