@@ -346,5 +346,11 @@ var CollisionDetector= require('./CollisionDetector.js');
 var cd = new CollisionDetector();
 console.log(CollisionDetector.NO_COLLISION);
 
+var AABB = require('./AABB.js');
+var Circle = require('./Circle.js');
+var Line = require('./Line.js');
 
-setInterval(mainLoop, 10);
+var aabb1 = new AABB(10, 10, 20, 20);
+console.log(aabb1);
+
+//setInterval(mainLoop, 10);

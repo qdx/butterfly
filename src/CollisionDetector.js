@@ -1,3 +1,5 @@
+var Geometry = require('./Geometry.js');
+
 const COLLISION_GROUPS = [0x0,
   0x1, 0x2, 0x4, 0x8]
 //0x10, 0x20, 0x40, 0x80,
@@ -10,11 +12,6 @@ const C_GROUP3 = COLLISION_GROUPS[3];
 const C_GROUP4 = COLLISION_GROUPS[4];
 //const C_GROUP5 = COLLISION_GROUPS[5];
 
-const C_BODY_TYPE_LINE = 1;
-const C_BODY_TYPE_AABB = 2;
-const C_BODY_TYPE_CIRCLE = 3;
-
-
 class CollisionDetector{
 
   constructor(){
@@ -25,31 +22,31 @@ class CollisionDetector{
     let group_can_collide = (obj1.collision_group & obj2.collision_group) > 0;
     if(!group_can_collide) return false;
 
-    let collision_type = obj1.collision_body.type + ':' + obj2.collision_body.type;
+    let collision_type = obj1.collision_body.shape + ':' + obj2.collision_body.shape;
     // FIXME: optimize with bit operation, bit comparison should be much faster than string
     switch(collision_type){
-      case C_BODY_TYPE_AABB + ':' + C_BODY_TYPE_AABB:
+      case Geometry.AABB + ':' + Geometry.AABB:
         return aabb_2_aabb_can_collide(obj1, obj2);
         break;
-      case C_BODY_TYPE_CIRCLE + ':' + C_BODY_TYPE_CIRCLE:
+      case Geometry.CIRCLE + ':' + Geometry.CIRCLE:
         return circle_2_circle_can_collide(obj1, obj2);
         break;
-      case C_BODY_TYPE_AABB + ':' + C_BODY_TYPE_CIRCLE:
+      case Geometry.AABB + ':' + Geometry.CIRCLE:
         return circle_2_aabb_can_collide(obj2, ojb1);
         break;
-      case C_BODY_TYPE_CIRCLE + ':' + C_BODY_TYPE_AABB:
+      case Geometry.CIRCLE + ':' + Geometry.AABB:
         return circle_2_aabb_can_collide(obj1, obj2);
         break;
-      case C_BODY_TYPE_CIRCLE + ':' + C_BODY_TYPE_LINE:
+      case Geometry.CIRCLE + ':' + Geometry.LINE:
         return circle_2_line_can_collide(obj1, obj2);
         break;
-      case C_BODY_TYPE_LINE + ':' + C_BODY_TYPE_CIRCLE:
+      case Geometry.LINE + ':' + Geometry.CIRCLE:
         return circle_2_line_can_collide(obj2, obj1);
         break;
-      case C_BODY_TYPE_AABB + ':' + C_BODY_LINE:
+      case Geometry.AABB + ':' + Geometry.LINE:
         return aabb_2_line_can_collide(obj1, obj2);
         break;
-      case C_BODY_LINE + ':' + C_BODY_TYPE_AABB:
+      case Geometry.LINE+ ':' + Geometry.AABB:
         return aabb_2_line_can_collide(obj2, obj1);
         break;
       default:
@@ -57,33 +54,75 @@ class CollisionDetector{
     }
   }
 
-  aabb_2_aabb_can_collide(aabb1, aabb2){
-
-    // TODO: start implement collision detection from here
-    // The following code is a good reference on aabb2aabb collision detection
-    //Bounds.overlaps = function(boundsA, boundsB) {
-        //return (boundsA.min.x <= boundsB.max.x && boundsA.max.x >= boundsB.min.x
-                //&& boundsA.max.y >= boundsB.min.y && boundsA.min.y <= boundsB.max.y);
-    //};
-
+  _distance(point1, point2){
+    return Math.sqrt(
+      Math.pow(point1.x-point2.x, 2)
+      + Math.pow(point1.y - point2.y, 2)
+    );
   }
 
-  circle_2_circle_can_collide(c, aabb){
-
+  _distance_square(point1, point2){
+    return Math.pow(point1.x-point2.x, 2)
+      + Math.pow(point1.y - point2.y, 2);
   }
 
-  circle_2_aabb_can_collide(c, aabb){
-
+  aabb_2_aabb_can_collide(ab1, ab2){
+    let min1 = ab1.collision_body.min;
+    let max1 = ab1.collision_body.max;
+    let min2 = ab2.collision_body.min;
+    let max2 = ab2.collision_body.max;
+    return (min1.x <= max2.x && max1.x >= min2.x)
+      && (min1.y <= max2.y && max1.y >= min2.y);
   }
 
-  circle_2_line_can_collide(c, b){
-
+  circle_2_circle_can_collide(c1, c2){
+    let center1 = c1.collision_body.center;
+    let center2 = c2.collision_body.center;
+    return _distance_square(center1, center2) <= Math.pow(c1.r + c2.r, 2);
   }
 
-  aabb_2_line_can_collide(aabb, b){
-
+  // return x  when min < x < max, other wise return which ever is closer to x from (min, max)
+  _clamp(x, min, max){
+    return x < min ? min : x > max ? max : x;
   }
 
+  circle_2_aabb_can_collide(c, ab){
+    let center = c.collision_body.center;
+    let clamp_x = _clamp(center.x, ab.min.x, ab.max.x);
+    let clamp_y = _clamp(center.y, ab.min.y, ab.max.y);
+
+    return Math.abs(center.x - clamp_x) < c.r
+      && Math.abs(center.y - clamp_y) < c.r;
+  }
+
+  circle_2_line_can_collide(c, l){
+    let center = c.collision_body.center;
+    switch(l.parallel_to){
+      case 'x':
+        return Math.abs(center.y - l.pos) < c.r;
+        break;
+      case 'y':
+        return Math.abs(center.x - l.pos) < c.r;
+        break;
+      default:
+        return false;
+    }
+  }
+
+  aabb_2_line_can_collide(ab, l){
+    let min = ab.collision_body.min;
+    let max = ab.collision_body.max;
+    switch(l.parallel_to){
+      case 'x':
+        return center.y <= max.y && center.y >= min.y;
+        break;
+      case 'y':
+        return center.x <= max.x && center.x >= min.x;
+        break;
+      default:
+        return false;
+    }
+  }
 }
 
 module.exports = CollisionDetector;
@@ -92,6 +131,3 @@ module.exports.C_GROUP1 = C_GROUP1;
 module.exports.C_GROUP2 = C_GROUP2;
 module.exports.C_GROUP3 = C_GROUP3;
 module.exports.C_GROUP4 = C_GROUP4;
-module.exports.C_BODY_TYPE_LINE = C_BODY_TYPE_LINE;
-module.exports.C_BODY_TYPE_AABB = C_BODY_TYPE_AABB;
-module.exports.C_BODY_TYPE_CIRCLE = C_BODY_TYPE_CIRCLE;
