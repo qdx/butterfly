@@ -10,5 +10,15 @@ class AABB extends Geometry{
     this.max.x = max_x;
     this.max.y = max_y;
   }
+  render(ctx){
+    ctx.beginPath();
+    ctx.rect(
+      this.min.x,
+      this.min.y,
+      this.max.x - this.min.x,
+      this.max.y - this.min.y);
+    ctx.stroke();
+    ctx.closePath();
+  }
 }
 module.exports = AABB;

@@ -1,3 +1,7 @@
+var CollisionDetector = require('./CollisionDetector.js');
+var Circle = require('./Circle.js');
+var GameObject = require('./GameObject.js');
+
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
 
@@ -24,6 +28,24 @@ IN_GAME_STATUS = 'in_game';
 var friction = 0.001;
 var acceleration = 0.03;
 var fuel_efficiency = 5;
+
+var player_body = new Circle(10, 200, 5);
+var player = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
+player.set_velocity(1, 1);
+player.set_acceleration(0, 0);
+
+var target_body = new Circle(400, 80, player_body.r * 2);
+var target = new GameObject(CollisionDetector.NO_COLLISION, target_body, target_body, false);
+
+var player_future_body = new Circle(0, 0, player_body.r);
+var player_future = new GameObject(CollisionDetector.NO_COLLISION, player_future_body, player_future_body, false);
+
+var state_2 = {
+  'player': player,
+  'target': target,
+  'player_future': player_future
+}
+
 var state = {
   'pos_x': 10,
   'pos_y': 200,
@@ -353,4 +375,4 @@ var Line = require('./Line.js');
 var aabb1 = new AABB(10, 10, 20, 20);
 console.log(aabb1);
 
-//setInterval(mainLoop, 10);
+setInterval(mainLoop, 10);

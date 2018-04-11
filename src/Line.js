@@ -7,5 +7,20 @@ class Line extends Geometry{
     this.parallel_to = parallel_to;
     this.pos = pos;
   }
+  render(ctx){
+    ctx.beginPath();
+    switch(this.parallel_to){
+      case 'x':
+        ctx.moveTo(0, pos);
+        ctx.lineTo(10000, pos);
+        break;
+      case 'y':
+        ctx.moveTo(pos, 0);
+        ctx.lineTo(pos, 10000);
+        break;
+    }
+  }
+  ctx.stroke();
+  ctx.closePath();
 }
 module.exports = Line;
