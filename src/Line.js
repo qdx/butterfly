@@ -19,8 +19,8 @@ class Line extends Geometry{
         ctx.lineTo(pos, 10000);
         break;
     }
+    ctx.stroke();
+    ctx.closePath();
   }
-  ctx.stroke();
-  ctx.closePath();
 }
 module.exports = Line;
