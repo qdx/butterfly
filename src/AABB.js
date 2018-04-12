@@ -1,4 +1,5 @@
 var Geometry = require('./Geometry.js');
+var CollisionDetector = require('./CollisionDetector.js');
 
 class AABB extends Geometry{
   constructor(min_x, min_y, max_x, max_y){
@@ -9,6 +10,8 @@ class AABB extends Geometry{
     this.max = {};
     this.max.x = max_x;
     this.max.y = max_y;
+    this.width = max_x - min_x;
+    this.height = max_y - min_y;
   }
   render(ctx){
     ctx.beginPath();

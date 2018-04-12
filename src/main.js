@@ -1,6 +1,9 @@
 var CollisionDetector = require('./CollisionDetector.js');
 var Circle = require('./Circle.js');
+var AABB = require('./AABB.js');
+var Line = require('./Line.js');
 var GameObject = require('./GameObject.js');
+var ImpluseResolver = require('./ImpluseResolver.js');
 
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
@@ -31,7 +34,7 @@ var fuel_efficiency = 5;
 
 var player_body = new Circle(10, 200, 5);
 var player = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
-player.set_velocity(1, 1);
+player.set_velocity(5, 5);
 player.set_acceleration(0, 0);
 
 var target_body = new Circle(400, 80, player_body.r * 2);
@@ -39,6 +42,15 @@ var target = new GameObject(CollisionDetector.NO_COLLISION, target_body, target_
 
 var player_future_body = new Circle(0, 0, player_body.r);
 var player_future = new GameObject(CollisionDetector.NO_COLLISION, player_future_body, player_future_body, false);
+
+var left_line = new Line('y', 0);
+var right_line = new Line('y', canvas.width);
+var top_line = new Line('x', 0);
+var bottom_line = new Line('x', canvas.height);
+var left = new GameObject(CollisionDetector.C_GROUP1, left_line, left_line, false);
+var right = new GameObject(CollisionDetector.C_GROUP1, right_line, right_line, false);
+var top = new GameObject(CollisionDetector.C_GROUP1, top_line, top_line, false);
+var bottom = new GameObject(CollisionDetector.C_GROUP1, bottom_line, bottom_line, false);
 
 var state_2 = {
   'player': player,
@@ -284,6 +296,56 @@ function mainLoop(){
   }
 }
 
+var detector = new CollisionDetector();
+var resolver = new ImpluseResolver();
+
+function physics_engine_step_new(game_objects){
+  game_objects.filter(obj => obj.moveable).forEach(function(obj){
+    let pos = obj.get_position();
+    obj.set_position(pos.x + obj.v_x, pos.y + obj.v_y);
+    obj.v_x += obj.a_x;
+    obj.v_y += obj.a_y;
+  });
+
+  var collision_pairs = [];
+  for(var i = 0 ; i < game_objects.length ; i ++){
+    for(var j = 1 ; j < game_objects.length ; j ++){
+      if(i != j && detector.can_collide(game_objects[i], game_objects[j])){
+        collision_pairs.push([game_objects[i], game_objects[j]]);
+      }
+    }
+  }
+  //if(collision_pairs.length > 0){
+    //console.log(collision_pairs);
+  //}
+
+  collision_pairs.forEach(function(c_pair){
+    resolver.resolve(c_pair[0], c_pair[1]);
+  });
+}
+
+function mainLoopNew(){
+  if(!game_started){
+    game_started = true;
+  }
+  var game_objects = [
+    player,
+    target,
+    left,
+    right,
+    top,
+    bottom
+  ];
+
+  physics_engine_step_new(game_objects);
+
+  ctx.save();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  game_objects.forEach(function(obj){
+    obj.display_body.render(ctx);
+  });
+  ctx.restore();
+}
 
 
 function root_clone(obj){
@@ -358,21 +420,5 @@ function physics_engine_step(state, renderer){
 
 console.log('start!');
 
-var tjs = require('./Test.js');
-tjs.hello();
-
-var GameObject = require('./GameObject.js');
-var go = new GameObject('name', 123);
-
-var CollisionDetector= require('./CollisionDetector.js');
-var cd = new CollisionDetector();
-console.log(CollisionDetector.NO_COLLISION);
-
-var AABB = require('./AABB.js');
-var Circle = require('./Circle.js');
-var Line = require('./Line.js');
-
-var aabb1 = new AABB(10, 10, 20, 20);
-console.log(aabb1);
-
-setInterval(mainLoop, 10);
+setInterval(mainLoopNew, 10);
+//setInterval(mainLoop, 10);

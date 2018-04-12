@@ -10,16 +10,16 @@ class ImpluseResolver{
         console.log('circle 2 circle impluse resolution not supported');
         break;
       case Geometry.AABB + ':' + Geometry.CIRCLE:
-        return circle_2_aabb_resolution(obj2, ojb1);
+        return this.circle_2_aabb_resolution(obj2, ojb1);
         break;
       case Geometry.CIRCLE + ':' + Geometry.AABB:
-        return circle_2_aabb_resolution(obj1, ojb2);
+        return this.circle_2_aabb_resolution(obj1, ojb2);
         break;
       case Geometry.CIRCLE + ':' + Geometry.LINE:
-        return circle_2_line_resolution(obj1, obj2);
+        return this.circle_2_line_resolution(obj1, obj2);
         break;
       case Geometry.LINE + ':' + Geometry.CIRCLE:
-        return circle_2_line_resolution(obj2, obj1);
+        return this.circle_2_line_resolution(obj2, obj1);
         break;
       case Geometry.AABB + ':' + Geometry.LINE:
         console.log('aabb 2 line impluse resolution not supported');
@@ -38,8 +38,14 @@ class ImpluseResolver{
   }
 
   circle_2_line_resolution(c, l){
-    c.v_x *= -1;
-    c.v_y *= -1;
+    switch(l.collision_body.parallel_to){
+      case 'x':
+        c.v_y *= -1;
+        break;
+      case 'y':
+        c.v_x *= -1;
+        break;
+    }
   }
 }
 module.exports = ImpluseResolver;
