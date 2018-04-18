@@ -1,4 +1,5 @@
 var Geometry = require('./Geometry.js');
+var ImpluseResolver = require('./ImpluseResolver.js');
 
 const COLLISION_GROUPS = [0x0,
   0x1, 0x2, 0x4, 0x8]
@@ -90,11 +91,35 @@ class CollisionDetector{
 
   circle_2_aabb_can_collide(c, ab){
     let center = c.center;
-    let clamp_x = _clamp(center.x, ab.min.x, ab.max.x);
-    let clamp_y = _clamp(center.y, ab.min.y, ab.max.y);
-
-    return Math.abs(center.x - clamp_x) < c.r
-      && Math.abs(center.y - clamp_y) < c.r;
+    let clamp_x = this._clamp(center.x, ab.min.x, ab.max.x);
+    let clamp_y = this._clamp(center.y, ab.min.y, ab.max.y);
+    let result = 0;
+    if(Math.abs(center.x - clamp_x) < c.r
+      && Math.abs(center.y - clamp_y) < c.r){
+      console.log('collide!');
+      result = {
+        'contact_type': 0,
+        'contact': {
+          'point': {
+            'x': clamp_x,
+            'y': clamp_y },
+          'aligned_axis': ''}};
+      // collision happened
+      if((clamp_x == ab.min.x || clamp_x == ab.max.x)
+        &&(clamp_y == ab.min.y || clamp_y == ab.max.y)){
+        // point contact with corner
+        result['contact_type'] = ImpluseResolver.CONTACT_CIRCLE_2_POINT;
+      }else if(clamp_x == ab.min.x || clamp_x == ab.max.x){
+        // collision on y axis
+        result['contact_type'] = ImpluseResolver.CONTACT_CIRCLE_2_AB_LINE;
+        result['contact']['aligned_axis'] = 'y';
+      }else if(clamp_y == ab.min.y || clamp_y == ab.max.y){
+        // collision on x axis
+        result['contact_type'] = ImpluseResolver.CONTACT_CIRCLE_2_AB_LINE;
+        result['contact']['aligned_axis'] = 'x';
+      }
+    }
+    return result;
   }
 
   circle_2_line_can_collide(c, l){
@@ -112,8 +137,12 @@ class CollisionDetector{
   }
 
   aabb_2_line_can_collide(ab, l){
+    return false;
     let min = ab.min;
     let max = ab.max;
+    let center = {};
+    center.x = (ab.min.x + ab.max.x) / 2;
+    center.y = (ab.min.y + ab.max.y) / 2;
     switch(l.parallel_to){
       case 'x':
         return center.y <= max.y && center.y >= min.y;

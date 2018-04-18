@@ -32,25 +32,6 @@ var friction = 0.001;
 var acceleration = 0.03;
 var fuel_efficiency = 5;
 
-var player_body = new Circle(10, 200, 5);
-var player = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
-player.set_velocity(5, 5);
-player.set_acceleration(0, 0);
-
-var target_body = new Circle(400, 80, player_body.r * 2);
-var target = new GameObject(CollisionDetector.NO_COLLISION, target_body, target_body, false);
-
-var player_future_body = new Circle(0, 0, player_body.r);
-var player_future = new GameObject(CollisionDetector.NO_COLLISION, player_future_body, player_future_body, false);
-
-var left_line = new Line('y', 0);
-var right_line = new Line('y', canvas.width);
-var top_line = new Line('x', 0);
-var bottom_line = new Line('x', canvas.height);
-var left = new GameObject(CollisionDetector.C_GROUP1, left_line, left_line, false);
-var right = new GameObject(CollisionDetector.C_GROUP1, right_line, right_line, false);
-var top = new GameObject(CollisionDetector.C_GROUP1, top_line, top_line, false);
-var bottom = new GameObject(CollisionDetector.C_GROUP1, bottom_line, bottom_line, false);
 
 var state_2 = {
   'player': player,
@@ -310,8 +291,9 @@ function physics_engine_step_new(game_objects){
   var collision_pairs = [];
   for(var i = 0 ; i < game_objects.length ; i ++){
     for(var j = 1 ; j < game_objects.length ; j ++){
-      if(i != j && detector.can_collide(game_objects[i], game_objects[j])){
-        collision_pairs.push([game_objects[i], game_objects[j]]);
+      var contact = detector.can_collide(game_objects[i], game_objects[j]);
+      if(i != j && contact != 0 ){
+        collision_pairs.push([game_objects[i], game_objects[j], contact]);
       }
     }
   }
@@ -320,9 +302,32 @@ function physics_engine_step_new(game_objects){
   //}
 
   collision_pairs.forEach(function(c_pair){
-    resolver.resolve(c_pair[0], c_pair[1]);
+    resolver.resolve(c_pair[0], c_pair[1], c_pair[2]);
   });
 }
+
+var player_body = new Circle(30, 31, 20);
+var player = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
+player.set_velocity(4, 4);
+player.set_acceleration(0, 0);
+
+var target_body = new Circle(400, 80, player_body.r * 2);
+var target = new GameObject(CollisionDetector.NO_COLLISION, target_body, target_body, false);
+
+var player_future_body = new Circle(0, 0, player_body.r);
+var player_future = new GameObject(CollisionDetector.NO_COLLISION, player_future_body, player_future_body, false);
+
+var left_line = new Line('y', 0);
+var right_line = new Line('y', canvas.width);
+var top_line = new Line('x', 0);
+var bottom_line = new Line('x', canvas.height);
+var left = new GameObject(CollisionDetector.C_GROUP1, left_line, left_line, false);
+var right = new GameObject(CollisionDetector.C_GROUP1, right_line, right_line, false);
+var top = new GameObject(CollisionDetector.C_GROUP1, top_line, top_line, false);
+var bottom = new GameObject(CollisionDetector.C_GROUP1, bottom_line, bottom_line, false);
+
+var block_aabb = new AABB(100, 100, 300, 200);
+var block = new GameObject(CollisionDetector.C_GROUP1, block_aabb, block_aabb, false);
 
 function mainLoopNew(){
   if(!game_started){
@@ -334,7 +339,8 @@ function mainLoopNew(){
     left,
     right,
     top,
-    bottom
+    bottom,
+    block
   ];
 
   physics_engine_step_new(game_objects);
