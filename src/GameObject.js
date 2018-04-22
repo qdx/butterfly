@@ -50,6 +50,10 @@ class GameObject{
     this.a_x = a_x;
     this.a_y = a_y;
   }
+
+  set_intersection(obj){
+    this.intersect_with = obj;
+  }
   // aabb should have:
   // min: {x: <>, y:<>}
   // max: {x: <>, y:<>}

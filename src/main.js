@@ -308,7 +308,7 @@ function physics_engine_step_new(game_objects){
 
 var player_body = new Circle(30, 31, 20);
 var player = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
-player.set_velocity(4, 4);
+player.set_velocity(6, 6);
 player.set_acceleration(0, 0);
 
 var target_body = new Circle(400, 80, player_body.r * 2);
@@ -344,6 +344,7 @@ function mainLoopNew(){
   ];
 
   physics_engine_step_new(game_objects);
+  console.log('v' + (player.v_x * player.v_x + player.v_y * player.v_y));
 
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);

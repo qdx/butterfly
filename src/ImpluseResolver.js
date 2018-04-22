@@ -38,11 +38,14 @@ class ImpluseResolver{
   }
 
   circle_2_aabb_resolution(c, ab, contact){
-    console.log('resolving!');
-    if(contact['contact_type'] == CONTACT_CIRCLE_2_POINT){
-      this._circle_2_point_resolution(c, contact['contact']['point']);
-    }else if(contact['contact_type'] == CONTACT_CIRCLE_2_AB_LINE){
-      this._circle_2_ab_line_resolution(c, contact['contact']['aligned_axis']);
+    if(c.intersect_with !== ab || ab.intersect_with != c){
+      if(contact['contact_type'] == CONTACT_CIRCLE_2_POINT){
+        this._circle_2_point_resolution(c, contact['contact']['point']);
+      }else if(contact['contact_type'] == CONTACT_CIRCLE_2_AB_LINE){
+        this._circle_2_ab_line_resolution(c, contact['contact']['aligned_axis']);
+      }
+      c.set_intersection(ab);
+      ab.set_intersection(c);
     }
   }
 
@@ -70,7 +73,7 @@ class ImpluseResolver{
     let cos_theta = (perp_contact_vector.dot_product(velocity_vector))
       /(perp_contact_vector.magnitude() * velocity_vector.magnitude());
 
-    let sin_theta = Math.sqrt(1 - cos_theta);
+    let sin_theta = Math.sqrt(1 - cos_theta * cos_theta);
 
     // Use vector rotation matrix:
     //|cos(2*theta), -sin(2*theta)|
@@ -91,7 +94,11 @@ class ImpluseResolver{
   }
 
   circle_2_line_resolution(c, l){
-    this._circle_2_ab_line_resolution(c, l.collision_body.parallel_to);
+    if(c.intersect_with !== l || l.intersect_with != c){
+      this._circle_2_ab_line_resolution(c, l.collision_body.parallel_to);
+      c.set_intersection(l);
+      l.set_intersection(c);
+    }
   }
 }
 module.exports = ImpluseResolver;
