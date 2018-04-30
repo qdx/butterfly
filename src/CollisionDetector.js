@@ -23,6 +23,7 @@ class CollisionDetector{
   can_collide(obj1, obj2){
     let group_can_collide = (obj1.collision_group & obj2.collision_group) > 0;
     if(!group_can_collide) return false;
+    if(!obj1.moveable && !obj2.moveable) return false;
 
     let collision_type = obj1.collision_body.shape + ':' + obj2.collision_body.shape;
     // FIXME: optimize with bit operation, bit comparison should be much faster than string
