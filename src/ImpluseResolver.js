@@ -6,6 +6,9 @@ const CONTACT_CIRCLE_2_AB_LINE = 2;
 
 class ImpluseResolver{
   resolve(obj1, obj2, contact){
+    if(obj1.pass_through || obj2.pass_through){
+      return;
+    }
     let collision_type = obj1.collision_body.shape + ':' + obj2.collision_body.shape;
     switch(collision_type){
       case Geometry.AABB + ':' + Geometry.AABB:

@@ -4,6 +4,10 @@ var AABB = require('./AABB.js');
 var Line = require('./Line.js');
 var GameObject = require('./GameObject.js');
 var ImpluseResolver = require('./ImpluseResolver.js');
+var HUD = require('./HUD.js');
+var Player = require('./Player.js');
+var GameArea= require('./GameArea.js');
+var Level = require('./Level.js');
 
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
@@ -307,77 +311,67 @@ function physics_engine_step_new(game_objects){
   });
 }
 
+
+
+var game_area = new GameArea(
+  undefined, 
+  {"min_x":0,
+  "min_y":0,
+  "max_x":600,
+  "max_y":600},
+  [{"x": 30, "y": 30}],
+  [],
+  CollisionDetector.C_GROUP1
+);
+//game_area.add_object(block);
+//game_area.add_object(block2);
+//game_area.add_object(block4);
+
+var width = canvas.width;
+var height = canvas.height;
+
+for(var i = 1 ; i < 4 ; i ++){
+  for(var j = 1 ; j < 4 ; j ++){
+    var min_x = i * width / 4;
+    var min_y = j * width / 4;
+    var block_new = new AABB(min_x, min_y, min_x + 20 , min_y + 20);
+    var block_new_aabb = new GameObject(CollisionDetector.C_GROUP1, block_new, block_new, false);
+    game_area.add_object(block_new_aabb);
+  }
+}
+
 var player_body = new Circle(30, 30, 10);
-var player = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
-player.set_velocity(15, 10);
-player.set_acceleration(0, 0);
+var player_obj = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
+player_obj.set_velocity(15, 10);
+player_obj.set_acceleration(0, 0);
+var player = new Player(undefined, player_obj, 100);
 
 var target_body = new Circle(400, 80, player_body.r * 2);
-var target = new GameObject(CollisionDetector.NO_COLLISION, target_body, target_body, false);
+var target = new GameObject(CollisionDetector.C_GROUP1, target_body, target_body, false);
+target.set_pass_through();
 
-var player_future_body = new Circle(0, 0, player_body.r);
-var player_future = new GameObject(CollisionDetector.NO_COLLISION, player_future_body, player_future_body, false);
+var hud = new HUD(undefined, ctx, 0, 600, 600, 680);
+canvas.width = 600;
+canvas.height = 700;
 
-var left_line = new Line('y', 0);
-var right_line = new Line('y', canvas.width);
-var top_line = new Line('x', 0);
-var bottom_line = new Line('x', canvas.height);
-var left = new GameObject(CollisionDetector.C_GROUP1, left_line, left_line, false);
-var right = new GameObject(CollisionDetector.C_GROUP1, right_line, right_line, false);
-var top = new GameObject(CollisionDetector.C_GROUP1, top_line, top_line, false);
-var bottom = new GameObject(CollisionDetector.C_GROUP1, bottom_line, bottom_line, false);
-
-var block_aabb = new AABB(100, 100, 120, 120);
-var block = new GameObject(CollisionDetector.C_GROUP1, block_aabb, block_aabb, false);
-
-var block2_aabb = new AABB(75, 80, 85, 90);
-var block2 = new GameObject(CollisionDetector.C_GROUP1, block2_aabb, block2_aabb, false);
-
-var block3_aabb = new AABB(400, 380, 380, 400);
-var block3 = new GameObject(CollisionDetector.C_GROUP1, block3_aabb, block3_aabb, false);
-
-var block4_aabb = new AABB(450, 410, 470, 430);
-var block4 = new GameObject(CollisionDetector.C_GROUP1, block4_aabb, block4_aabb, false);
+var level = new Level(ctx, player, hud, game_area, 60);
+level.game_area.objects.push(player.game_object);
+level.start_game();
 
 function mainLoopNew(){
-  if(!game_started){
-    game_started = true;
-  }
-  var game_objects = [
-    player,
-    target,
-    left,
-    right,
-    top,
-    bottom
-    //block,
-    //block2,
-    //block3,
-    //block4,
-  ];
-  var width = canvas.width;
-  var height = canvas.height;
-
-  for(var i = 1 ; i < 4 ; i ++){
-    for(var j = 1 ; j < 4 ; j ++){
-      var min_x = i * width / 4;
-      var min_y = j * width / 4;
-      var block_new = new AABB(min_x, min_y, min_x + 20 , min_y + 20);
-      var block_new_aabb = new GameObject(CollisionDetector.C_GROUP1, block_new, block_new, false);
-      game_objects.push(block_new_aabb);
-    }
-  }
 
   for(var i = 0 ; i < 10 ; i ++){
-    physics_engine_step_new(game_objects);
+    physics_engine_step_new(level.game_area.objects);
   }
-  console.log('v' + (player.v_x * player.v_x + player.v_y * player.v_y));
+  //console.log('v' + (player.v_x * player.v_x + player.v_y * player.v_y));
+
 
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  game_objects.forEach(function(obj){
+  level.game_area.objects.forEach(function(obj){
     obj.display_body.render(ctx);
   });
+  hud.render();
   ctx.restore();
 }
 

@@ -2,11 +2,15 @@ var Geometry = require('./Geometry.js');
 
 class GameObject{
   constructor(collision_group, collision_body, display_body, moveable){
-    console.log('[GameObject] constructing');
     this.collision_group = collision_group;
     this.collision_body = collision_body;
-    this.display_body = display_body;
+    //if(display_body.type == "geometry"){
+      //this.display_body = display_body;
+    //}else{
+      this.display_body = collision_body;
+    //}
     this.moveable = moveable;
+    this.pass_through = false;
 
     if(collision_body.shape == Geometry.AABB){
       this.x = collision_body.min.x;
@@ -15,6 +19,10 @@ class GameObject{
       this.x = collision_body.center.x;
       this.y = collision_body.center.y;
     }
+  }
+
+  set_pass_through(){
+    this.pass_through = true;
   }
 
   get_position(){

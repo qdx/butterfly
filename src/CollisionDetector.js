@@ -35,7 +35,7 @@ class CollisionDetector{
         return this.circle_2_circle_can_collide(obj1, obj2);
         break;
       case Geometry.AABB + ':' + Geometry.CIRCLE:
-        return this.circle_2_aabb_can_collide(obj2, ojb1);
+        return this.circle_2_aabb_can_collide(obj2, obj1);
         break;
       case Geometry.CIRCLE + ':' + Geometry.AABB:
         return this.circle_2_aabb_can_collide(obj1, obj2);
@@ -97,8 +97,7 @@ class CollisionDetector{
     let c2 = obj2.collision_body;
     let center1 = c1.center;
     let center2 = c2.center;
-    if(_distance_square(center1, center2) <= Math.pow(c1.r + c2.r, 2)){
-      // TODO: implement penetration
+    if(this._distance_square(center1, center2) <= Math.pow(c1.r + c2.r, 2)){
       return new Contact(obj1, obj2);
     }else{
       return undefined;
@@ -167,12 +166,12 @@ class CollisionDetector{
     let result = 0;
     switch(l.parallel_to){
       case 'x':
-        if(Math.abs(center.y - l.pos) < c.r){
+        if(Math.abs(center.y - l.pos.y) < c.r){
           result = new Contact(obj1, obj2);
         }
         break;
       case 'y':
-        if(Math.abs(center.x - l.pos) < c.r){
+        if(Math.abs(center.x - l.pos.x) < c.r){
           result = new Contact(obj1, obj2);
         }
         break;
