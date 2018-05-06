@@ -2,11 +2,18 @@ var Geometry = require('./Geometry.js');
 
 class GameObject{
   constructor(collision_group, collision_body, display_body, moveable){
+    if(GameObject.id_counter === undefined){
+      GameObject.id_counter = 1;
+    }else{
+      GameObject.id_counter += 1;
+    }
+    this.id = GameObject.id_counter;
     this.collision_group = collision_group;
     this.collision_body = collision_body;
     //if(display_body.type == "geometry"){
       //this.display_body = display_body;
     //}else{
+    // TODO: should I keep display body separate from collision body?
       this.display_body = collision_body;
     //}
     this.moveable = moveable;
@@ -19,6 +26,8 @@ class GameObject{
       this.x = collision_body.center.x;
       this.y = collision_body.center.y;
     }
+    this.intersect_with = [];
+    this.impulse_resolved_with = [];
   }
 
   set_pass_through(){
@@ -59,8 +68,38 @@ class GameObject{
     this.a_y = a_y;
   }
 
+  set_impulse_resolve_target(obj){
+    if(!this.impulse_resolved_with.includes(obj)){
+      this.impulse_resolved_with.push(obj);
+    }
+  }
+
+  remove_impulse_resolve_target(obj){
+    let idx = this.impulse_resolved_with.indexOf((obj));
+    if(idx > -1){
+      this.impulse_resolved_with.splice(obj, 1);
+    }
+  }
+
+  impulse_resolved_with_target(obj){
+    return this.impulse_resolved_with.includes(obj);
+  }
+
   set_intersection(obj){
-    this.intersect_with = obj;
+    if(!this.intersect_with.includes(obj)){
+      this.intersect_with.push(obj);
+    }
+  }
+
+  remove_intersection(obj){
+    let idx = this.intersect_with.indexOf((obj));
+    if(idx > -1){
+      this.intersect_with.splice(obj, 1);
+    }
+  }
+
+  is_intersect_with(obj){
+    return this.intersect_with.includes(obj);
   }
   // aabb should have:
   // min: {x: <>, y:<>}

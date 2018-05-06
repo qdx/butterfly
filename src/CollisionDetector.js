@@ -1,6 +1,8 @@
 var Geometry = require('./Geometry.js');
 var ImpluseResolver = require('./ImpluseResolver.js');
 var Contact = require('./Contact.js');
+var MathUtility = require('./MathUtility.js');
+var MyDebug = require('./MyDebug.js');
 
 const COLLISION_GROUPS = [0x0,
   0x1, 0x2, 0x4, 0x8]
@@ -27,53 +29,43 @@ class CollisionDetector{
 
     let collision_type = obj1.collision_body.shape + ':' + obj2.collision_body.shape;
     // FIXME: optimize with bit operation, bit comparison should be much faster than string
+    let result = undefined;
     switch(collision_type){
       case Geometry.AABB + ':' + Geometry.AABB:
-        return this.aabb_2_aabb_can_collide(obj1, obj2);
+        result = this.aabb_2_aabb_can_collide(obj1, obj2);
         break;
       case Geometry.CIRCLE + ':' + Geometry.CIRCLE:
-        return this.circle_2_circle_can_collide(obj1, obj2);
+        result = this.circle_2_circle_can_collide(obj1, obj2);
         break;
       case Geometry.AABB + ':' + Geometry.CIRCLE:
-        return this.circle_2_aabb_can_collide(obj2, obj1);
+        result = this.circle_2_aabb_can_collide(obj2, obj1);
         break;
       case Geometry.CIRCLE + ':' + Geometry.AABB:
-        return this.circle_2_aabb_can_collide(obj1, obj2);
+        result = this.circle_2_aabb_can_collide(obj1, obj2);
         break;
       case Geometry.CIRCLE + ':' + Geometry.LINE:
-        return this.circle_2_line_can_collide(obj1, obj2);
+        result = this.circle_2_line_can_collide(obj1, obj2);
         break;
       case Geometry.LINE + ':' + Geometry.CIRCLE:
-        return this.circle_2_line_can_collide(obj2, obj1);
+        result = this.circle_2_line_can_collide(obj2, obj1);
         break;
       case Geometry.AABB + ':' + Geometry.LINE:
-        return this.aabb_2_line_can_collide(obj1, obj2);
+        result = this.aabb_2_line_can_collide(obj1, obj2);
         break;
       case Geometry.LINE+ ':' + Geometry.AABB:
-        return this.aabb_2_line_can_collide(obj2, obj1);
+        result = this.aabb_2_line_can_collide(obj2, obj1);
         break;
-      default:
-        return false;
     }
-  }
-
-  _distance(point1, point2){
-    return Math.sqrt(
-      Math.pow(point1.x-point2.x, 2)
-      + Math.pow(point1.y - point2.y, 2)
-    );
-  }
-
-  _distance_square(point1, point2){
-    let x_sub = point1.x-point2.x;
-    let y_sub = point1.y - point2.y;
-    return x_sub * x_sub + y_sub * y_sub
-  }
-
-  _distance_square(x1, y1, x2, y2){
-    let x_sub = x1 - x2;
-    let y_sub = y1 - y2;
-    return x_sub * x_sub + y_sub * y_sub;
+    if(!result){
+      obj1.remove_intersection(obj2);
+      obj2.remove_intersection(obj1);
+      obj1.remove_impulse_resolve_target(obj2);
+      obj2.remove_impulse_resolve_target(obj1);
+    }else{
+      obj1.set_intersection(obj2);
+      obj2.set_intersection(obj1);
+    }
+    return result;
   }
 
   aabb_2_aabb_can_collide(obj1, obj2){
@@ -83,13 +75,12 @@ class CollisionDetector{
     let max1 = ab1.max;
     let min2 = ab2.min;
     let max2 = ab2.max;
+    let result = undefined;
     if((min1.x <= max2.x && max1.x >= min2.x)
       && (min1.y <= max2.y && max1.y >= min2.y)){
-      // TODO: implement penetration
-      return new Contact(obj1, obj2);
-    }else{
-      return undefined;
+      result = new Contact(obj1, obj2);
     }
+    return result;
   }
 
   circle_2_circle_can_collide(obj1, obj2){
@@ -97,11 +88,12 @@ class CollisionDetector{
     let c2 = obj2.collision_body;
     let center1 = c1.center;
     let center2 = c2.center;
-    if(this._distance_square(center1, center2) <= Math.pow(c1.r + c2.r, 2)){
-      return new Contact(obj1, obj2);
-    }else{
-      return undefined;
+    let circle_center_distance = MathUtility.distance_square(center1.x, center1.y, center2.x, center2.y);
+    let result = undefined;
+    if(circle_center_distance <= Math.pow(c1.r + c2.r, 2)){
+      result = new Contact(obj1, obj2);
     }
+    return result;
   }
 
   // return x  when min < x < max, other wise return which ever is closer to x from (min, max)
@@ -110,8 +102,8 @@ class CollisionDetector{
   }
 
   circle_2_aabb_can_collide(obj1, obj2){
-    let c = obj1.collision_body;
-    let ab = obj2.collision_body;
+    var c = obj1.collision_body;
+    var ab = obj2.collision_body;
     let center = c.center;
     let clamp_x = this._clamp(center.x, ab.min.x, ab.max.x);
     let clamp_y = this._clamp(center.y, ab.min.y, ab.max.y);
@@ -125,17 +117,19 @@ class CollisionDetector{
             'x': clamp_x,
             'y': clamp_y },
           'aligned_axis': ''}};
-      // collision happened
       if((clamp_x == ab.min.x || clamp_x == ab.max.x)
         &&(clamp_y == ab.min.y || clamp_y == ab.max.y)){
         // point contact with corner
-        let center_to_clamp = this._distance_square(
+        let center_to_clamp = MathUtility.distance_square(
           clamp_x,
           clamp_y,
           c.center.x,
           c.center.y);
         if( center_to_clamp <= c.r*c.r){
           result['contact_type'] = Contact.CONTACT_CIRCLE_2_POINT;
+        }else{
+          // collision didn't happen
+          result = 0;
         }
       }
       else if(clamp_x == ab.min.x || clamp_x == ab.max.x){
@@ -148,12 +142,12 @@ class CollisionDetector{
         result['contact']['aligned_axis'] = 'x';
       }else{
         // circle center inside AABB
-
+        if(MyDebug.engine_debug){
+          console.log("circle center inside aabb!");
+          console.log('circle:' + c.id + ', aabb:' + ab.id);
+        }
+        result['contact_type'] = Contact.CONTACT_CIRCLE_2_POINT;
       }
-    }
-    if(!result){
-      obj1.set_intersection(undefined);
-      obj2.set_intersection(undefined);
     }
     return result;
   }
@@ -176,33 +170,31 @@ class CollisionDetector{
         }
         break;
     }
-    if(!result){
-      obj1.set_intersection(undefined);
-      obj2.set_intersection(undefined);
-    }
     return result;
   }
 
   aabb_2_line_can_collide(obj1, obj2){
     let ab = obj1.collision_body;
     let l = obj2.collision_body;
-    // disabling this since we don't support it right now
-    return false;
     let min = ab.min;
     let max = ab.max;
     let center = {};
     center.x = (ab.min.x + ab.max.x) / 2;
     center.y = (ab.min.y + ab.max.y) / 2;
+    let result = undefined;
     switch(l.parallel_to){
       case 'x':
-        return center.y <= max.y && center.y >= min.y;
+        if(center.y <= max.y && center.y >= min.y){
+          result = new Contact(obj1, obj2);
+        }
         break;
       case 'y':
-        return center.x <= max.x && center.x >= min.x;
+        if(center.x <= max.x && center.x >= min.x){
+          result = new Contact(obj1, obj2);
+        }
         break;
-      default:
-        return false;
     }
+    return result;
   }
 }
 

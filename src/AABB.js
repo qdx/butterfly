@@ -1,5 +1,6 @@
 var Geometry = require('./Geometry.js');
 var CollisionDetector = require('./CollisionDetector.js');
+var MyDebug = require('./MyDebug.js');
 
 class AABB extends Geometry{
   constructor(min_x, min_y, max_x, max_y){
@@ -13,7 +14,7 @@ class AABB extends Geometry{
     this.width = max_x - min_x;
     this.height = max_y - min_y;
   }
-  render(ctx){
+  render(ctx, id=undefined){
     ctx.beginPath();
     ctx.rect(
       this.min.x,
@@ -21,6 +22,12 @@ class AABB extends Geometry{
       this.max.x - this.min.x,
       this.max.y - this.min.y);
     ctx.stroke();
+    if(MyDebug.engine_debug){
+      // DEBUG
+      if(id){
+        ctx.strokeText(id, this.min.x, this.min.y);
+      }
+    }
     ctx.closePath();
   }
 }
