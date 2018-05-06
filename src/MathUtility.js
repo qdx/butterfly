@@ -13,5 +13,10 @@ class MathUtility{
     return x_sub * x_sub + y_sub * y_sub;
   }
 
+  // return x  when min < x < max, other wise return which ever is closer to x from (min, max)
+  static clamp(x, min, max){
+    return x < min ? min : x > max ? max : x;
+  }
+
 }
 module.exports = MathUtility;

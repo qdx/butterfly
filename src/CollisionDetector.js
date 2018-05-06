@@ -96,17 +96,12 @@ class CollisionDetector{
     return result;
   }
 
-  // return x  when min < x < max, other wise return which ever is closer to x from (min, max)
-  _clamp(x, min, max){
-    return x < min ? min : x > max ? max : x;
-  }
-
   circle_2_aabb_can_collide(obj1, obj2){
     var c = obj1.collision_body;
     var ab = obj2.collision_body;
     let center = c.center;
-    let clamp_x = this._clamp(center.x, ab.min.x, ab.max.x);
-    let clamp_y = this._clamp(center.y, ab.min.y, ab.max.y);
+    let clamp_x = MathUtility.clamp(center.x, ab.min.x, ab.max.x);
+    let clamp_y = MathUtility.clamp(center.y, ab.min.y, ab.max.y);
     let result = 0;
     if(Math.abs(center.x - clamp_x) < c.r
       && Math.abs(center.y - clamp_y) < c.r){
