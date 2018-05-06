@@ -56,9 +56,12 @@ class HUD{
 
   render(){
     let c_time = Date.now();
-    let percent_left = (this.level.time_limit - (c_time - this.level.start_time) / 1000)/this.level.time_limit;
-    this._render_time_bar(percent_left > 0 ? percent_left : 0);
-    this._render_fuel_bar();
+    let time_percent_left = (this.level.time_limit - (c_time - this.level.start_time) / 1000)/this.level.time_limit;
+    this._render_time_bar(time_percent_left > 0 ? time_percent_left : 0);
+
+
+    let fuel_percent_left = this.level.player.current_fuel / this.level.player.max_fuel;
+    this._render_fuel_bar(fuel_percent_left);
   }
 
   _render_time_bar(percent = 1){
