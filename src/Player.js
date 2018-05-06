@@ -8,6 +8,10 @@ class Player {
     this.current_fuel = max_fuel;
   }
 
+  set_acceleration(acc){
+    this.acceleration = acc;
+  }
+
   get_fuel_percent(){
     return this.current_fuel / this.max_fuel;
   }

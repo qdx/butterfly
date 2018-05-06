@@ -1,6 +1,9 @@
 const CONTACT_CIRCLE_2_POINT = 1;
 const CONTACT_CIRCLE_2_AB_LINE = 2;
 
+// TODO: optimize the structure of Contact and make sure 
+// CollisionDetector and ImpluseResolver are using it correctly
+
 class Contact{
   constructor(obj1, obj2){
     this.obj1 = obj1;

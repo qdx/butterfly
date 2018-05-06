@@ -1,4 +1,3 @@
-var CollisionDetector = require('./CollisionDetector.js');
 var Circle = require('./Circle.js');
 var AABB = require('./AABB.js');
 var Line = require('./Line.js');
@@ -8,14 +7,14 @@ var HUD = require('./HUD.js');
 var Player = require('./Player.js');
 var GameArea= require('./GameArea.js');
 var Level = require('./Level.js');
+var CollisionDetector = require('./CollisionDetector.js');
+var UserInteractionHandler = require('./UserInteractionHandler.js');
 var MyDebug = require('./MyDebug.js');
 MyDebug.engine_debug = 0;
 
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
 
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
 //document.addEventListener("keypress", keyPressHandler, false);
 
 game_length = 1000;
@@ -56,51 +55,7 @@ var moves = {
   "ArrowRight": false
 }
 
-function keyDownHandler(e){
-  if(e.code in moves){
-    moves[e.code] = true;
-    if(fuel_bar['fill'] >= fuel_efficiency){
-      switch(e.code){
-        case "ArrowUp":
-          state['a_y'] -= acceleration;
-          break;
-        case "ArrowDown":
-          state['a_y'] += acceleration;
-          break;
-        case "ArrowLeft":
-          state['a_x'] -= acceleration;
-          break;
-        case "ArrowRight":
-          state['a_x'] += acceleration;
-          break;
-      }
-      fuel_bar['fill'] -= fuel_efficiency;
-    }else{
-      fuel_bar['fill'] = 0;
-    }
-  }
-}
 
-function keyUpHandler(e){
-  if(e.code in moves){
-    moves[e.code] = false;
-    switch(e.code){
-      case "ArrowUp":
-        state['a_y'] = 0;
-        break;
-      case "ArrowDown":
-        state['a_y'] = 0;
-        break;
-      case "ArrowLeft":
-        state['a_x'] = 0;
-        break;
-      case "ArrowRight":
-        state['a_x'] = 0;
-        break;
-    }
-    state_prediction();
-  }
-}
 
 var min_velocity = 0.003;
 function check_stopped(state){
@@ -188,9 +143,10 @@ for(var i = 1 ; i < 4 ; i ++){
 
 var player_body = new Circle(30, 30, 10);
 var player_obj = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
-player_obj.set_velocity(10, 15);
+player_obj.set_velocity(1, 1);
 player_obj.set_acceleration(0, 0);
 var player = new Player(undefined, player_obj, 100);
+player.set_acceleration(0.1);
 
 var target_body = new Circle(400, 80, player_body.r * 2);
 var target = new GameObject(CollisionDetector.C_GROUP1, target_body, target_body, false);
@@ -203,6 +159,10 @@ canvas.height = 700;
 var level = new Level(ctx, player, hud, game_area, 30);
 level.game_area.objects.push(player.game_object);
 level.start_game();
+
+var ui_handler = new UserInteractionHandler(level);
+document.addEventListener("keydown", ui_handler.key_down_handler_wrapper(), false);
+document.addEventListener("keyup", ui_handler.key_up_handler_wrapper(), false);
 
 function mainLoopNew(){
   for(var i = 0 ; i < 10 ; i ++){

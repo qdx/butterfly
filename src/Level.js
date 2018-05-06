@@ -22,9 +22,10 @@ class Level{
   }
 
   check_game_end(){
-    // TODO: start from here, why is player not intersecting with target?
-    if(this.player.game_object.is_intersect_with === this.game_area.exits[0]){
-      console.log('win!');
+    if(this.player.game_object.is_intersect_with(this.game_area.exits[0])){
+      return true;
+    }else{
+      return false;
     }
   }
 }
