@@ -9,72 +9,14 @@ var GameArea= require('./GameArea.js');
 var Level = require('./Level.js');
 var CollisionDetector = require('./CollisionDetector.js');
 var UserInteractionHandler = require('./UserInteractionHandler.js');
+
 var MyDebug = require('./MyDebug.js');
 MyDebug.engine_debug = 0;
 
 var canvas = document.getElementById("game_field");
 var ctx = canvas.getContext('2d');
-
-//document.addEventListener("keypress", keyPressHandler, false);
-
-game_length = 1000;
-current_game_tick = 0;
-state_history = {};
-ending_tick = 0;
-
-game_started = false;
-paused = false;
-pause_start_at = 0;
-total_paused = 0;
-game_ended = false;
-game_end_with_status = '';
-
-GAME_WON_STATUS = 'win';
-GAME_LOST_STATUS = 'lost';
-IN_GAME_STATUS = 'in_game';
-
-var friction = 0.001;
-var acceleration = 0.03;
-var fuel_efficiency = 5;
-
-function render_game_end(ctx, status){
-  var ending_text = 'You Win!';
-  if(status == GAME_LOST_STATUS){
-    ending_text = 'You lost!';
-  }
-  ctx.font = "30px Arial";
-  ctx.fillText(ending_text, canvas.width / 2, canvas.height / 2);
-}
-
-
-
-var moves = {
-  "ArrowDown": false,
-  "ArrowUp": false,
-  "ArrowLeft": false,
-  "ArrowRight": false
-}
-
-
-
-var min_velocity = 0.003;
-function check_stopped(state){
-  return Math.abs(state['v_x']) <= min_velocity && Math.abs(state['v_y']) <= min_velocity;
-}
-
-function state_prediction(){
-  var state_copy = root_clone(state);
-  state_history[current_game_tick] = state;
-  var i = current_game_tick;
-  while((Math.abs(state_copy['v_x']) > 0.003 || Math.abs(state_copy['v_y']) > 0.003) && i < game_length){
-    state_copy = physics_engine_step(state_copy, undefined);
-    state_history[i] = state_copy;
-    i++;
-  }
-  ending_tick = i - 1;
-}
-
-
+canvas.width = 600;
+canvas.height = 700;
 
 var detector = new CollisionDetector();
 var resolver = new ImpluseResolver();
@@ -91,9 +33,6 @@ function physics_engine_step_new(game_objects){
       }
     }
   });
-  //if(collision_pairs.length > 0){
-    //console.log(collision_pairs);
-  //}
 
   collision_pairs.forEach(function(c_pair){
     resolver.resolve(c_pair[0], c_pair[1], c_pair[2]);
@@ -108,8 +47,25 @@ function physics_engine_step_new(game_objects){
   });
 }
 
+function mainLoopNew(){
+  for(var i = 0 ; i < 10 ; i ++){
+    physics_engine_step_new(level.game_area.objects);
+  }
+  level.check_game_end();
+  //console.log('v' + (player.v_x * player.v_x + player.v_y * player.v_y));
 
 
+  ctx.save();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  level.game_area.objects.forEach(function(obj){
+    obj.display_body.render(ctx, obj.id);
+  });
+  hud.render();
+  ctx.restore();
+}
+
+
+// ===================== test level =======================
 var game_area = new GameArea(
   undefined, 
   {"min_x":0,
@@ -153,44 +109,16 @@ var target = new GameObject(CollisionDetector.C_GROUP1, target_body, target_body
 target.set_pass_through();
 
 var hud = new HUD(undefined, ctx, 0, 600, 600, 680);
-canvas.width = 600;
-canvas.height = 700;
 
 var level = new Level(ctx, player, hud, game_area, 30);
 level.game_area.objects.push(player.game_object);
 level.start_game();
 
+// [level_switch]: Will need to remove the ui handler and re-bind a new one that's created for the new level
 var ui_handler = new UserInteractionHandler(level);
 document.addEventListener("keydown", ui_handler.key_down_handler_wrapper(), false);
 document.addEventListener("keyup", ui_handler.key_up_handler_wrapper(), false);
-
-function mainLoopNew(){
-  for(var i = 0 ; i < 10 ; i ++){
-    physics_engine_step_new(level.game_area.objects);
-  }
-  level.check_game_end();
-  //console.log('v' + (player.v_x * player.v_x + player.v_y * player.v_y));
-
-
-  ctx.save();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  level.game_area.objects.forEach(function(obj){
-    obj.display_body.render(ctx, obj.id);
-  });
-  hud.render();
-  ctx.restore();
-}
-
-
-function root_clone(obj){
-  var clone = {};
-  for(var key in obj){
-    clone[key] = obj[key];
-  }
-  return clone;
-}
+// ===================== test level =======================
 
 console.log('start!');
-
 setInterval(mainLoopNew, 10);
-//setInterval(mainLoop, 10);
