@@ -28,6 +28,8 @@ class GameObject{
     }
     this.intersect_with = [];
     this.impulse_resolved_with = [];
+    this.a_x = 0;
+    this.a_y = 0;
   }
 
   set_pass_through(){
