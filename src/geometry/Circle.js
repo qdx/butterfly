@@ -1,5 +1,5 @@
 var Geometry = require('./Geometry.js');
-var CollisionDetector = require('./CollisionDetector.js');
+var CollisionDetector = require('../physics/CollisionDetector.js');
 
 class Circle extends Geometry{
   constructor(center_x, center_y, radius){

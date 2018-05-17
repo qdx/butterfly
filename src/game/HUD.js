@@ -1,4 +1,4 @@
-var Geometry = require('./Geometry.js');
+var Geometry = require('../geometry/Geometry.js');
 var BarIndicator = require('./BarIndicator.js');
 
 class HUD{

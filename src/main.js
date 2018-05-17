@@ -1,10 +1,10 @@
-var Circle = require('./Circle.js');
-var GameObject = require('./GameObject.js');
-var ImpluseResolver = require('./ImpluseResolver.js');
-var CollisionDetector = require('./CollisionDetector.js');
-var UserInteractionHandler = require('./UserInteractionHandler.js');
-var LevelLoader = require('./LevelLoader.js');
-var Player = require('./Player.js');
+var Circle = require('./geometry/Circle.js');
+var GameObject = require('./game/GameObject.js');
+var ImpluseResolver = require('./physics/ImpluseResolver.js');
+var CollisionDetector = require('./physics/CollisionDetector.js');
+var UserInteractionHandler = require('./game/UserInteractionHandler.js');
+var LevelLoader = require('./game/LevelLoader.js');
+var Player = require('./game/Player.js');
 
 var MyDebug = require('./MyDebug.js');
 MyDebug.engine_debug = 0;

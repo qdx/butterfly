@@ -1,6 +1,6 @@
 var HUD = require('./HUD.js');
 var GameArea = require('./GameArea.js');
-var MathUtility = require('./MathUtility.js');
+var MathUtility = require('../math/MathUtility.js');
 
 
 class Level{

@@ -1,4 +1,4 @@
-var Line = require('./Line.js');
+var Line = require('../geometry/Line.js');
 var GameObject = require('./GameObject.js');
 
 class GameArea{

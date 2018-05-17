@@ -1,8 +1,11 @@
-var Geometry = require('./Geometry.js');
 var ImpluseResolver = require('./ImpluseResolver.js');
 var Contact = require('./Contact.js');
-var MathUtility = require('./MathUtility.js');
-var MyDebug = require('./MyDebug.js');
+
+var Geometry = require('../geometry/Geometry.js');
+
+var MathUtility = require('../math/MathUtility.js');
+
+var MyDebug = require('../MyDebug.js');
 
 const COLLISION_GROUPS = [0x0,
   0x1, 0x2, 0x4, 0x8]

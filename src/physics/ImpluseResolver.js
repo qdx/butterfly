@@ -1,6 +1,6 @@
-var Geometry = require('./Geometry.js');
-var Vector = require('./Vector.js');
-var MyDebug = require('./MyDebug.js');
+var Geometry = require('../geometry/Geometry.js');
+var Vector = require('../math/Vector.js');
+var MyDebug = require('../MyDebug.js');
 
 const CONTACT_CIRCLE_2_POINT = 1;
 const CONTACT_CIRCLE_2_AB_LINE = 2;

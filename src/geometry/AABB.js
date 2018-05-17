@@ -1,6 +1,6 @@
 var Geometry = require('./Geometry.js');
-var CollisionDetector = require('./CollisionDetector.js');
-var MyDebug = require('./MyDebug.js');
+var CollisionDetector = require('../physics/CollisionDetector.js');
+var MyDebug = require('../MyDebug.js');
 
 class AABB extends Geometry{
   constructor(min_x, min_y, max_x, max_y){

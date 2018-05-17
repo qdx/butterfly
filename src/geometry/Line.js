@@ -1,5 +1,5 @@
 var Geometry = require('./Geometry.js');
-var CollisionDetector = require('./CollisionDetector.js');
+var CollisionDetector = require('../physics/CollisionDetector.js');
 
 class Line extends Geometry{
   constructor(parallel_to, pos, length){

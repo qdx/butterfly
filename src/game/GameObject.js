@@ -1,4 +1,4 @@
-var Geometry = require('./Geometry.js');
+var Geometry = require('../geometry/Geometry.js');
 
 class GameObject{
   constructor(collision_group, collision_body, display_body, moveable){

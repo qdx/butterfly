@@ -1,12 +1,14 @@
-var Circle = require('./Circle.js');
-var AABB = require('./AABB.js');
-var Line = require('./Line.js');
 var GameObject = require('./GameObject.js');
-var ImpluseResolver = require('./ImpluseResolver.js');
 var HUD = require('./HUD.js');
 var GameArea= require('./GameArea.js');
 var Level = require('./Level.js');
-var CollisionDetector = require('./CollisionDetector.js');
+
+var Circle = require('../geometry/Circle.js');
+var AABB = require('../geometry/AABB.js');
+var Line = require('../geometry/Line.js');
+
+var ImpluseResolver = require('../physics/ImpluseResolver.js');
+var CollisionDetector = require('../physics/CollisionDetector.js');
 
 class LevelLoader{
 
