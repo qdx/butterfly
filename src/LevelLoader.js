@@ -25,7 +25,7 @@ class LevelLoader{
         "min_y":0,
         "max_x":600,
         "max_y":600},
-      [{"x": 30, "y": 30}],
+      [{"x": 30, "y": 30, "v_x": 1, "v_y": 1}],
       [],
       CollisionDetector.C_GROUP1
     );
@@ -33,7 +33,6 @@ class LevelLoader{
     var exit_obj = new GameObject(CollisionDetector.C_GROUP1, exit_circle, undefined, false);
     exit_obj.set_pass_through();
     game_area.add_exit(exit_obj);
-    game_area.add_entry({'x': 10, 'y': 10});
 
 
     for(var i = 1 ; i < 4 ; i ++){

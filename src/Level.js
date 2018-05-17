@@ -27,10 +27,10 @@ class Level{
     player.game_object.set_velocity(1, 1);
     this.game_area.objects.push(player.game_object);
     this.player.set_level(this);
-    player.set_acceleration(0.1);
-    let player_pos = this.game_area.entries[0];
-    this.player.game_object.x = player_pos.x;
-    this.player.game_object.y = player_pos.y;
+    let player_entry = this.game_area.entries[0];
+    this.player.game_object.x = player_entry.x;
+    this.player.game_object.y = player_entry.y;
+    this.player.game_object.set_velocity(player_entry.v_x, player_entry.v_y);
   }
 
   start_game(){

@@ -56,6 +56,8 @@ var key_down_handler = ui_handler.key_down_handler_wrapper();
 
 function mainLoopNew(){
   if(!level.start_time){
+    console.log('starting level:' + current_level_number);
+    console.log('level id is:' + level.id);
     level.init_player(player);
     document.addEventListener("keydown", key_down_handler, false);
     document.addEventListener("keyup", key_up_handler, false);
@@ -64,7 +66,6 @@ function mainLoopNew(){
   for(var i = 0 ; i < 10 ; i ++){
     physics_engine_step_new(level.game_area.objects);
   }
-  //console.log('v' + (player.v_x * player.v_x + player.v_y * player.v_y));
 
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);

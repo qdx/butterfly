@@ -7,6 +7,7 @@ class Player {
     this.max_fuel = max_fuel;
     this.current_fuel = max_fuel;
     this.fuel_efficiency = 1;
+    this.acceleration = 0.1;
   }
 
   set_acceleration(acc){
