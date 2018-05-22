@@ -34,8 +34,7 @@ class UserInteractionHandler{
       if(e.code in this.moves){
         var player = this.level.player;
         var player_obj = player.game_object;
-        if(player.current_fuel >= player.fuel_efficiency){
-          player.current_fuel -= player.fuel_efficiency;
+        if(player.burn_fuel()){
           switch(e.code){
             case "ArrowUp":
               player_obj.a_y -= player.acceleration;
@@ -50,8 +49,6 @@ class UserInteractionHandler{
               player_obj.a_x += player.acceleration;
               break;
           }
-        }else{
-          player.current_fuel = 0;
         }
       }
 

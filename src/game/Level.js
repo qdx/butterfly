@@ -24,13 +24,17 @@ class Level{
 
   init_player(player){
     this.player = player;
-    player.game_object.set_velocity(1, 1);
+
+    this.player.game_object.set_velocity(1, 1);
     this.game_area.objects.push(player.game_object);
     this.player.set_level(this);
+
     let player_entry = this.game_area.entries[0];
     this.player.game_object.x = player_entry.x;
     this.player.game_object.y = player_entry.y;
     this.player.game_object.set_velocity(player_entry.v_x, player_entry.v_y);
+
+    this.hud.init_player(this.player);
   }
 
   start_game(){

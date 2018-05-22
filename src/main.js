@@ -66,7 +66,7 @@ function mainLoopNew(){
   for(var i = 0 ; i < 10 ; i ++){
     physics_engine_step_new(level.game_area.objects);
   }
-
+  level.player.update();
   ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   level.game_area.objects.forEach(function(obj){

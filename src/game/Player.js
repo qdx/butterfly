@@ -12,13 +12,12 @@ class Player {
     this.acceleration = 0.1;
     this.barrels_of_fuels = 1;
     this.current_fuel = MAX_FUEL;
-    this.fuel_replacement_time = 500;
+    this.fuel_replacement_time = 3000;
     // engine_status:
     // ok, no_fuel, replacing_fuel
     this.engine_status = ENGINE_STATUS_OK;
   }
 
-  // TODO: the game engine should always call update() on player to refresh player status
   update(){
     this.check_engine();
   }

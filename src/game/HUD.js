@@ -1,5 +1,6 @@
 var Geometry = require('../geometry/Geometry.js');
 var BarIndicator = require('./BarIndicator.js');
+var FuelIndicator = require('./FuelIndicator.js');
 
 class HUD{
   constructor(level, ctx, min_x, min_y, max_x, max_y){
@@ -13,25 +14,28 @@ class HUD{
     this._setup_fuel_indicator();
   }
 
+  init_player(player){
+    this.player = player;
+    this.fuel_bar.init_player(player);
+  }
+
   set_level(level){
     this.level = level;
   }
 
   _setup_fuel_indicator(){
     var fuel_bar_config = {
-      "x": 120,
+      "x": 200,
       "y": 10,
       "width": 100,
-      "height": 30,
-      "border-color": "black",
-      "fill-color": "red"
+      "height": 30
     };
-    this.fuel_bar = new BarIndicator(
+    this.fuel_bar = new FuelIndicator(
       this.ctx,
       this.min_x + fuel_bar_config.x,
       this.min_y + fuel_bar_config.y,
-      this.min_x + fuel_bar_config.x + fuel_bar_config.width,
-      this.min_y + fuel_bar_config.y + fuel_bar_config.height
+      fuel_bar_config.width,
+      fuel_bar_config.height
     );
   }
 
@@ -69,8 +73,7 @@ class HUD{
     this.time_bar.render();
   }
 
-  _render_fuel_bar(percent = 1){
-    this.fuel_bar.set_fill_percent(percent);
+  _render_fuel_bar(){
     this.fuel_bar.render();
   }
 
