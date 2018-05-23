@@ -10,7 +10,7 @@ class Level{
   //this.game_area
   //this.player
 
-  constructor(ctx, hud, game_area, time_limit, id){
+  constructor(ctx, hud, game_area, time_limit, id, fuel_supply){
     this.id = id;
     this.ctx = ctx;
     this.time_limit = time_limit;
@@ -20,6 +20,8 @@ class Level{
 
     this.game_area = game_area;
     this.game_area.set_level(this);
+
+    this.fuel_supply = fuel_supply;
   }
 
   init_player(player){
@@ -33,6 +35,8 @@ class Level{
     this.player.game_object.x = player_entry.x;
     this.player.game_object.y = player_entry.y;
     this.player.game_object.set_velocity(player_entry.v_x, player_entry.v_y);
+
+    this.player.add_fuel(this.fuel_supply);
 
     this.hud.init_player(this.player);
   }

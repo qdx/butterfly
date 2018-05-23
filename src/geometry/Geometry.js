@@ -6,6 +6,15 @@ class Geometry{
   constructor(shape){
     this.shape = shape;
   }
+  set_fillStyle(fillStyle){
+    this.fillStyle = fillStyle;
+  }
+  set_strokeStyle(strokeStyle){
+    this.strokeStyle = strokeStyle;
+  }
+  set_lineWidth(lineWidth){
+    this.lineWidth = lineWidth;
+  }
 }
 
 module.exports = Geometry;

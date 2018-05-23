@@ -10,8 +10,8 @@ class Player {
     this.game_object = game_object;
     this.fuel_efficiency = 20;
     this.acceleration = 0.1;
-    this.barrels_of_fuels = 4;
-    this.current_fuel = MAX_FUEL;
+    this.barrels_of_fuels = 0;
+    this.current_fuel = 0;
     this.fuel_replacement_time = 3000;
     // engine_status:
     // ok, no_fuel, replacing_fuel
@@ -41,11 +41,26 @@ class Player {
         this.try_finish_fuel_replacement();
         break;
       case ENGINE_STATUS_OK:
-        if(this.barrels_of_fuels < 1 
-          && this.current_fuel < 1){
-          this.engine_status = ENGINE_STATUS_NO_FUEL;
+        if(this.current_fuel < 1){
+          if(this.barrels_of_fuels < 1){
+            this.engine_status = ENGINE_STATUS_NO_FUEL;
+          }else{
+            this.replace_fuel();
+          }
         }
         break;
+    }
+  }
+
+  add_fuel(n){
+    this.barrels_of_fuels += n;
+  }
+
+  add_fuel_percent(p){
+    this.current_fuel += p;
+    if(this.current_fuel > MAX_FUEL){
+      this.barrels_of_fuels += (this.current_fuel / MAX_FUEL);
+      this.current_fuel = this.current_fuel % MAX_FUEL;
     }
   }
 

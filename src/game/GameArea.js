@@ -54,6 +54,11 @@ class GameArea{
     if(this.exits === undefined){
       this.exits = [];
     }
+    // properties all exits would have:
+    exit.display_body.set_strokeStyle('green');
+    exit.display_body.set_lineWidth(3);
+    exit.set_pass_through();
+
     this.exits.push(exit);
     this.objects.push(exit);
   }

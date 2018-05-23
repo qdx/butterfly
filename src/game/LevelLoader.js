@@ -27,29 +27,17 @@ class LevelLoader{
         "min_y":0,
         "max_x":600,
         "max_y":600},
-      [{"x": 30, "y": 30, "v_x": 1, "v_y": 1}],
+      [{"x": 30, "y": 300, "v_x": 0.01, "v_y": 0}],
       [],
       CollisionDetector.C_GROUP1
     );
-    var exit_circle = new Circle(50, 200, 50);
+    var exit_circle = new Circle(500, 300, 10);
     var exit_obj = new GameObject(CollisionDetector.C_GROUP1, exit_circle, undefined, false);
-    exit_obj.set_pass_through();
     game_area.add_exit(exit_obj);
-
-
-    for(var i = 1 ; i < 4 ; i ++){
-      for(var j = 1 ; j < 4 ; j ++){
-        var min_x = i * width / 4;
-        var min_y = j * height / 4;
-        var block_new = new AABB(min_x, min_y, min_x + 20 , min_y + 20);
-        var block_new_aabb = new GameObject(CollisionDetector.C_GROUP1, block_new, block_new, false);
-        game_area.add_object(block_new_aabb);
-      }
-    }
 
     var hud = new HUD(undefined, ctx, 0, 600, 600, 680);
 
-    var level = new Level(ctx, hud, game_area, 30, id);
+    var level = new Level(ctx, hud, game_area, 30, id, 1);
     return level;
   }
 
@@ -71,7 +59,7 @@ class LevelLoader{
 
     var hud = new HUD(undefined, ctx, 0, 600, 600, 680);
 
-    var level = new Level(ctx, hud, game_area, 30, id);
+    var level = new Level(ctx, hud, game_area, 30, id, 1);
     return level;
   }
 
