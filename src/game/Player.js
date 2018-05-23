@@ -10,7 +10,7 @@ class Player {
     this.game_object = game_object;
     this.fuel_efficiency = 20;
     this.acceleration = 0.1;
-    this.barrels_of_fuels = 1;
+    this.barrels_of_fuels = 4;
     this.current_fuel = MAX_FUEL;
     this.fuel_replacement_time = 3000;
     // engine_status:
@@ -20,6 +20,14 @@ class Player {
 
   update(){
     this.check_engine();
+  }
+
+  get_fuel_replacement_start_time(){
+    return this.fuel_replacement_start;
+  }
+
+  get_engine_status(){
+    return this.engine_status;
   }
 
   check_engine(){
@@ -61,7 +69,7 @@ class Player {
   replace_fuel(){
     if(this.barrels_of_fuels >= 1){
       this.barrels_of_fuels -= 1;
-      this.battery_replacement_start = Date.now();
+      this.fuel_replacement_start = Date.now();
       this.engine_status = ENGINE_STATUS_REPLACE_FUEL;
     }else{
       this.engine_status = ENGINE_STATUS_NO_FUEL;
@@ -69,11 +77,11 @@ class Player {
   }
 
   try_finish_fuel_replacement(){
-    if(Date.now() - this.battery_replacement_start 
+    if(Date.now() - this.fuel_replacement_start 
         >= this.fuel_replacement_time){
       this.current_fuel = MAX_FUEL;
       this.engine_status = ENGINE_STATUS_OK;
-      this.fuel_replacement_time = null;
+      this.fuel_replacement_start = null;
       return true;
     }else{
       return false;
@@ -109,3 +117,6 @@ class Player {
   }
 }
 module.exports = Player;
+module.exports.ENGINE_STATUS_OK = ENGINE_STATUS_OK;
+module.exports.ENGINE_STATUS_NO_FUEL = ENGINE_STATUS_NO_FUEL;
+module.exports.ENGINE_STATUS_REPLACE_FUEL = ENGINE_STATUS_REPLACE_FUEL ;

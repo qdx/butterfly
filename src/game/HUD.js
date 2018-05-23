@@ -27,7 +27,7 @@ class HUD{
     var fuel_bar_config = {
       "x": 200,
       "y": 10,
-      "width": 100,
+      "width": 200,
       "height": 30
     };
     this.fuel_bar = new FuelIndicator(
