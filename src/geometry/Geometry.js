@@ -6,6 +6,12 @@ class Geometry{
   constructor(shape){
     this.shape = shape;
   }
+  clone(geometry){
+    geometry.fillStyle = this.fillStyle;
+    geometry.strokeStyle = this.strokeStyle;
+    geometry.lineWidth = this.lineWidth;
+    return geometry;
+  }
   set_fillStyle(fillStyle){
     this.fillStyle = fillStyle;
   }

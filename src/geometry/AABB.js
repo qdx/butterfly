@@ -14,6 +14,10 @@ class AABB extends Geometry{
     this.width = max_x - min_x;
     this.height = max_y - min_y;
   }
+
+  clone(){
+    return super.clone(new AABB(this.min_x, this.min_y, this.max_x, this.max_y));
+  }
   render(ctx, id=undefined){
     ctx.beginPath();
     ctx.rect(

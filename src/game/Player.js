@@ -5,17 +5,37 @@ const ENGINE_STATUS_NO_FUEL = 'no_fuel';
 const ENGINE_STATUS_REPLACE_FUEL = 'replacing_fuel';
 
 class Player {
-  constructor(level, game_object){
-    this.level = level;
+  constructor(game_object){
     this.game_object = game_object;
-    this.fuel_efficiency = 20;
-    this.acceleration = 0.1;
-    this.barrels_of_fuels = 0;
-    this.current_fuel = 0;
-    this.fuel_replacement_time = 3000;
     // engine_status:
     // ok, no_fuel, replacing_fuel
     this.engine_status = ENGINE_STATUS_OK;
+  }
+
+  init_default(){
+    this.fuel_efficiency = 20;
+    this.acceleration = 0.2;
+    this.barrels_of_fuels = 0;
+    this.current_fuel = 0;
+    this.fuel_replacement_time = 3000;
+  }
+
+  clone(){
+    var cloned_player = new Player(this.game_object.clone());
+    cloned_player.set_fuel_efficiency(this.get_fuel_efficiency());
+    cloned_player.set_acceleration(this.get_acceleration());
+    cloned_player.set_barrels_of_fuels(this.get_barrels_of_fuels());
+    cloned_player.set_current_fuel(this.get_current_fuel());
+    cloned_player.set_fuel_replacement_time(this.get_fuel_replacement_time());
+    return cloned_player;
+  }
+
+  set_fuel_efficiency(f){
+    this.fuel_efficiency = f;
+  }
+
+  get_fuel_efficiency(){
+    return this.fuel_efficiency;
   }
 
   update(){
@@ -52,7 +72,7 @@ class Player {
     }
   }
 
-  add_fuel(n){
+  add_fuel_barrel(n){
     this.barrels_of_fuels += n;
   }
 
@@ -62,6 +82,14 @@ class Player {
       this.barrels_of_fuels += (this.current_fuel / MAX_FUEL);
       this.current_fuel = this.current_fuel % MAX_FUEL;
     }
+  }
+
+  set_current_fuel(f){
+    this.current_fuel = f;
+  }
+
+  get_current_fuel(){
+    return this.current_fuel;
   }
 
   get_fuel_percent(){

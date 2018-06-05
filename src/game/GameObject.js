@@ -14,6 +14,7 @@ class GameObject{
       //this.display_body = display_body;
     //}else{
     // TODO: should I keep display body separate from collision body?
+    // FIXME: should not always do this:
       this.display_body = collision_body;
     //}
     this.moveable = moveable;
@@ -30,6 +31,10 @@ class GameObject{
     this.impulse_resolved_with = [];
     this.a_x = 0;
     this.a_y = 0;
+  }
+
+  clone(){
+    return new GameObject(this.collision_group, this.collision_body.clone(), undefined, this.moveable);
   }
 
   set_pass_through(){

@@ -50,8 +50,16 @@ class UserInteractionHandler{
               break;
           }
         }
+      }else{
+        switch(e.code){
+          case "KeyR":
+            console.log("pressed r, shoudl reload game!");
+            //this.level = this.original_level.clone();
+            break;
+          case "Enter":
+            break;
+        }
       }
-
     }
     return func;
   }

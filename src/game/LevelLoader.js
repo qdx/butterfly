@@ -16,18 +16,17 @@ class LevelLoader{
     var levels = [];
     levels.push(LevelLoader._load_level_0(0, ctx, canvas_width, canvas_height));
     levels.push(LevelLoader._load_level_1(1, ctx, canvas_width, canvas_height));
-    levels.push(LevelLoader._load_level_0(2, ctx, canvas_width, canvas_height));
+    levels.push(LevelLoader._load_level_2(2, ctx, canvas_width, canvas_height));
     return levels;
   }
 
   static _load_level_0(id, ctx, width, height){
     var game_area = new GameArea(
-      undefined, 
       {"min_x":0,
         "min_y":0,
         "max_x":600,
         "max_y":600},
-      [{"x": 30, "y": 300, "v_x": 0.01, "v_y": 0}],
+      [{"x": 30, "y": 300, "v_x": 0.1, "v_y": 0}],
       [],
       CollisionDetector.C_GROUP1
     );
@@ -35,31 +34,64 @@ class LevelLoader{
     var exit_obj = new GameObject(CollisionDetector.C_GROUP1, exit_circle, undefined, false);
     game_area.add_exit(exit_obj);
 
-    var hud = new HUD(undefined, ctx, 0, 600, 600, 680);
+    var hud = new HUD(ctx, 0, 600, 600, 680);
 
-    var level = new Level(ctx, hud, game_area, 30, id, 1);
+    var level = new Level(ctx, hud, game_area, 10000, id, 1);
     return level;
   }
 
   static _load_level_1(id, ctx, width, height){
     var game_area = new GameArea(
-      undefined, 
       {"min_x":0,
         "min_y":0,
         "max_x":600,
         "max_y":600},
-      [{"x": 400, "y": 30, "v_x": 0, "v_y": 0}],
+      [{"x": 30, "y": 300, "v_x": 0, "v_y": 0}],
       [],
       CollisionDetector.C_GROUP1
     );
-    var exit_circle = new Circle(50, 500, 10);
+    var exit_circle = new Circle(500, 300, 10);
     var exit_obj = new GameObject(CollisionDetector.C_GROUP1, exit_circle, undefined, false);
-    exit_obj.set_pass_through();
     game_area.add_exit(exit_obj);
 
-    var hud = new HUD(undefined, ctx, 0, 600, 600, 680);
 
-    var level = new Level(ctx, hud, game_area, 30, id, 1);
+    let min_x = 290;
+    let min_y = 100;
+    var block_new = new AABB(min_x, min_y, min_x + 20 , min_y + 400);
+    var block_new_aabb = new GameObject(CollisionDetector.C_GROUP1, block_new, block_new, false);
+    game_area.add_object(block_new_aabb);
+
+    var hud = new HUD(ctx, 0, 600, 600, 680);
+
+    var level = new Level(ctx, hud, game_area, 15000, id, 1);
+    return level;
+  }
+
+  static _load_level_2(id, ctx, width, height){
+    var game_area = new GameArea(
+      {"min_x":0,
+        "min_y":0,
+        "max_x":600,
+        "max_y":600},
+      [{"x": 30, "y": 300, "v_x": 0, "v_y": 0}],
+      [],
+      CollisionDetector.C_GROUP1,
+      false
+    );
+    var exit_circle = new Circle(500, 300, 10);
+    var exit_obj = new GameObject(CollisionDetector.C_GROUP1, exit_circle, undefined, false);
+    game_area.add_exit(exit_obj);
+
+
+    let min_x = 290;
+    let min_y = 100;
+    var block_new = new AABB(min_x, min_y, min_x + 20 , min_y + 400);
+    var block_new_aabb = new GameObject(CollisionDetector.C_GROUP1, block_new, block_new, false);
+    game_area.add_object(block_new_aabb);
+
+    var hud = new HUD(ctx, 0, 600, 600, 680);
+
+    var level = new Level(ctx, hud, game_area, 15000, id, 1);
     return level;
   }
 

@@ -9,6 +9,9 @@ class Circle extends Geometry{
     this.center.y = center_y;
     this.r = radius;
   }
+  clone(){
+    return super.clone(new Circle(this.center.x, this.center.y, this.r));
+  }
   render(ctx){
     ctx.save();
     ctx.beginPath();

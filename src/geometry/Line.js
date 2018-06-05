@@ -9,6 +9,12 @@ class Line extends Geometry{
     this.pos = pos;
     this.length = length;
   }
+
+  clone(){
+    var cloned_line = super.clone(new Line(this.parallel_to, this.pos, this.length));
+    return cloned_line;
+  }
+
   render(ctx){
     ctx.beginPath();
     switch(this.parallel_to){

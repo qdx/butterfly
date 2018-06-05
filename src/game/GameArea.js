@@ -2,31 +2,49 @@ var Line = require('../geometry/Line.js');
 var GameObject = require('./GameObject.js');
 
 class GameArea{
-  constructor(level, play_area, entries, exits, collision_group){
-    this.level = level;
+  constructor(play_area, entries, exits, collision_group, have_border = true){
     this.play_area = play_area;
     this.entries = entries;
     this.exits = exits;
     this.collision_group = collision_group;
-    this.objects = [];
+    this._objects = [];
 
-    var line_top = new Line("x", {"x": play_area.min_x, "y": play_area.min_y}, play_area.max_x - play_area.min_x);
-    var line_bottom = new Line("x", {"x": play_area.min_x, "y": play_area.max_y}, play_area.max_x - play_area.min_x);
-    var line_left = new Line("y", {"x": play_area.min_x, "y": play_area.min_y}, play_area.max_y - play_area.min_y);
-    var line_right = new Line("y", {"x": play_area.max_x, "y": play_area.min_y}, play_area.max_y - play_area.min_y);
-    var play_area_borders = [line_top, line_bottom, line_left, line_right];
-    var play_area_border_objs = play_area_borders.map(function(line){
-      return new GameObject(
-        collision_group,
-        line,
-        {"type": "geometry"},
-        false
-      )
-    });
-    console.log(play_area_border_objs);
-    for(var i = 0 ; i < play_area_border_objs.length ; i ++){
-      this.objects.push(play_area_border_objs[i]);
+    if(have_border){
+      var line_top = new Line("x", {"x": play_area.min_x, "y": play_area.min_y}, play_area.max_x - play_area.min_x);
+      var line_bottom = new Line("x", {"x": play_area.min_x, "y": play_area.max_y}, play_area.max_x - play_area.min_x);
+      var line_left = new Line("y", {"x": play_area.min_x, "y": play_area.min_y}, play_area.max_y - play_area.min_y);
+      var line_right = new Line("y", {"x": play_area.max_x, "y": play_area.min_y}, play_area.max_y - play_area.min_y);
+      var play_area_borders = [line_top, line_bottom, line_left, line_right];
+      var play_area_border_objs = play_area_borders.map(function(line){
+        return new GameObject(
+          collision_group,
+          line,
+          {"type": "geometry"},
+          false
+        )
+      });
+      for(var i = 0 ; i < play_area_border_objs.length ; i ++){
+        this._objects.push(play_area_border_objs[i]);
+      }
     }
+  }
+
+  clone(){
+    var cloned_entries = [];
+    this.entries.forEach(function(entry){
+      cloned_entries.push(entry);
+    });
+    var cloned_exits = [];
+    this.exits.forEach(function(exit){
+      cloned_exits.push(exit.clone());
+    });
+    var cloned_objects = [];
+    this._objects.forEach(function(obj){
+      cloned_objects.push(obj);
+    });
+    var cloned_game_area = new GameArea(this.play_area, cloned_entries, cloned_exits, this.collision_group, this.have_border);
+    cloned_game_area.set_game_objects(cloned_objects);
+    return cloned_game_area;
   }
 
   set_level(level){
@@ -60,14 +78,29 @@ class GameArea{
     exit.set_pass_through();
 
     this.exits.push(exit);
-    this.objects.push(exit);
+  }
+
+  set_game_objects(game_objects){
+    this._objects = game_objects;
+  }
+
+  get_game_objects(){
+    return this._objects.concat(this.exits);
   }
 
   add_object(game_object){
-    if(this.objects === undefined){
-      this.objects= [];
+    if(this._objects === undefined){
+      this._objects= [];
     }
-    this.objects.push(game_object);
+    this._objects.push(game_object);
+  }
+
+
+  in_game_area(x, y){
+    return x < this.play_area.max_x
+      && x > this.play_area.min_x
+      && y < this.play_area.max_y
+      && y > this.play_area.min_y;
   }
 }
 module.exports = GameArea;

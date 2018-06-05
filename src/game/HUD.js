@@ -3,8 +3,7 @@ var BarIndicator = require('./BarIndicator.js');
 var FuelIndicator = require('./FuelIndicator.js');
 
 class HUD{
-  constructor(level, ctx, min_x, min_y, max_x, max_y){
-    this.level = level;
+  constructor(ctx, min_x, min_y, max_x, max_y){
     this.ctx = ctx;
     this.min_x = min_x;
     this.min_y = min_y;
@@ -12,6 +11,10 @@ class HUD{
     this.max_y = max_y;
     this._setup_time_indicator();
     this._setup_fuel_indicator();
+  }
+
+  clone(){
+    return new HUD(this.ctx, this.min_x, this.min_y, this.max_x, this.max_y);
   }
 
   init_player(player){
@@ -55,12 +58,11 @@ class HUD{
       this.min_x + time_bar_config.x + time_bar_config.width,
       this.min_y + time_bar_config.y + time_bar_config.height
     );
-    console.log(this.time_bar);
   }
 
   render(){
     let c_time = Date.now();
-    let time_percent_left = (this.level.time_limit - (c_time - this.level.start_time) / 1000)/this.level.time_limit;
+    let time_percent_left = (this.level.time_limit - (c_time - this.level.start_time))/this.level.time_limit;
     this._render_time_bar(time_percent_left > 0 ? time_percent_left : 0);
 
 
