@@ -59,6 +59,10 @@ class UserInteractionHandler{
             this.level.game_status = 'restart';
             break;
           case "Enter":
+            console.log("pressed enter, will continue game!");
+            if(this.level.game_status == 'win'){
+              this.level.game_status = 'continue';
+            }
             break;
         }
       }

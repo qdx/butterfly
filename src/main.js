@@ -89,6 +89,19 @@ function mainLoopNew(){
   ui_handler.level.check_game_end();
   let game_end_status = ui_handler.level.game_status;
   if(game_end_status == 'win'){
+    console.log('game won')
+    ctx.save();
+    ctx.font = "30px Arial";
+    ctx.fillStyle = 'green';
+    ctx.fillText("You win! Press Enter to play next level.", 10, 100);
+    ctx.restore();
+  }else if(game_end_status == 'restart'){
+    console.log('restarting level');
+    document.removeEventListener("keydown", ui_handler.key_down_handler, false);
+    document.removeEventListener("keyup", ui_handler.key_up_handler, false);
+    // start next level
+    ui_handler = clone_and_start_level(levels[current_level_number], player);
+  }else if(game_end_status == 'continue'){
     if(levels.length > current_level_number + 1){
       console.log('game ends, have more level, load next level');
       document.removeEventListener("keydown", ui_handler.key_down_handler, false);
@@ -100,19 +113,12 @@ function mainLoopNew(){
     }else{
       console.log('game ends, no more level');
     }
-  }else if(game_end_status == 'restart'){
-    console.log('restarting level');
-    document.removeEventListener("keydown", ui_handler.key_down_handler, false);
-    document.removeEventListener("keyup", ui_handler.key_up_handler, false);
-    // start next level
-    ui_handler = clone_and_start_level(levels[current_level_number], player);
-  }
-  else if(game_end_status == 'lost'){
+  }else if(game_end_status == 'lost'){
     console.log('game lost')
     ctx.save();
-    ctx.font = "40px Arial";
+    ctx.font = "30px Arial";
     ctx.fillStyle = 'red';
-    ctx.fillText("you lost", 100, 100);
+    ctx.fillText("You lost... Press r to replay this level.", 10, 100);
     ctx.restore();
   }
 }
