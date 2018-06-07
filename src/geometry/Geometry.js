@@ -7,9 +7,9 @@ class Geometry{
     this.shape = shape;
   }
   clone(geometry){
-    geometry.fillStyle = this.fillStyle;
-    geometry.strokeStyle = this.strokeStyle;
-    geometry.lineWidth = this.lineWidth;
+    geometry.set_fillStyle(this.fillStyle);
+    geometry.set_strokeStyle(this.strokeStyle);
+    geometry.set_lineWidth(this.lineWidth);
     return geometry;
   }
   set_fillStyle(fillStyle){

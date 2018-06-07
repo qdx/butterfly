@@ -1,5 +1,6 @@
 var Geometry = require('./Geometry.js');
 var CollisionDetector = require('../physics/CollisionDetector.js');
+var MyDebug = require('../MyDebug.js');
 
 class Line extends Geometry{
   constructor(parallel_to, pos, length){
@@ -15,7 +16,7 @@ class Line extends Geometry{
     return cloned_line;
   }
 
-  render(ctx){
+  render(ctx, id=undefined){
     ctx.beginPath();
     switch(this.parallel_to){
       case 'x':
@@ -27,8 +28,12 @@ class Line extends Geometry{
         ctx.lineTo(this.pos.x, this.length);
         break;
     }
+    if(MyDebug.engine_debug && id){
+      ctx.strokeText(id, this.pos.x, this.pos.y);
+    }
     ctx.stroke();
     ctx.closePath();
+    ctx.restore();
   }
 }
 module.exports = Line;

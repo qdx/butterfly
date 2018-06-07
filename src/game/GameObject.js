@@ -105,6 +105,10 @@ class GameObject{
     }
   }
 
+  clear_intersection(){
+    this.intersect_with = [];
+  }
+
   is_intersect_with(obj){
     return this.intersect_with.includes(obj);
   }

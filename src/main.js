@@ -23,7 +23,7 @@ function physics_engine_step_new(game_objects){
     for(var j = 0 ; j < game_objects.length ; j ++){
       if(obj !== game_objects[j] ){
         var contact = detector.can_collide(obj, game_objects[j]);
-        if(contact != 0 ){
+        if(contact){
           collision_pairs.push([obj, game_objects[j], contact]);
         }
       }
@@ -46,55 +46,68 @@ function physics_engine_step_new(game_objects){
 var player_body = new Circle(30, 30, 10);
 var player_obj = new GameObject(CollisionDetector.C_GROUP1, player_body, player_body, true);
 var player = new Player(player_obj);
-player.init_default();
 
 var current_level_number = 0;
 var levels = LevelLoader.get_levels(ctx, canvas.width, canvas.height);
-var level = levels[current_level_number].clone();
-var ui_handler = new UserInteractionHandler(level);
-var key_up_handler = ui_handler.key_up_handler_wrapper();
-var key_down_handler = ui_handler.key_down_handler_wrapper();
+var ui_handler = clone_and_start_level(levels[current_level_number], player);
+
+function clone_and_start_level(level, player){
+  var cloned_level = level.clone();
+  var cloned_player = player.clone();
+  cloned_level.init_player(cloned_player);
+  var ui_handler = new UserInteractionHandler(cloned_level);
+  return ui_handler;
+}
+
+function end_level(){
+
+}
 
 function mainLoopNew(){
-  if(!level.start_time){
+  // start the game
+  if(!ui_handler.level.start_time){
     console.log('starting level:' + current_level_number);
-    console.log('level id is:' + level.id);
-    level.init_player(player.clone());
-    document.addEventListener("keydown", key_down_handler, false);
-    document.addEventListener("keyup", key_up_handler, false);
-    level.start_game();
+    console.log('level id is:' + ui_handler.level.id);
+    document.addEventListener("keydown", ui_handler.key_down_handler, false);
+    document.addEventListener("keyup", ui_handler.key_up_handler, false);
+    ui_handler.level.start_game();
   }
-  if(level.game_status == 'started'){
+  if(ui_handler.level.game_status == 'started'){
     for(var i = 0 ; i < 10 ; i ++){
-      physics_engine_step_new(level.game_area.get_game_objects());
+      physics_engine_step_new(ui_handler.level.game_area.get_game_objects());
     }
-    level.player.update();
+    ui_handler.level.player.update();
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    level.game_area.get_game_objects().forEach(function(obj){
+    ui_handler.level.game_area.get_game_objects().forEach(function(obj){
       obj.display_body.render(ctx, obj.id);
     });
-    level.hud.render();
+    ui_handler.level.hud.render();
     ctx.restore();
   }
 
-  let game_end_status = level.check_game_end();
-  if(game_end_status == 1){
+  ui_handler.level.check_game_end();
+  let game_end_status = ui_handler.level.game_status;
+  if(game_end_status == 'win'){
     if(levels.length > current_level_number + 1){
       console.log('game ends, have more level, load next level');
-      document.removeEventListener("keydown", key_down_handler, false);
-      document.removeEventListener("keyup", key_up_handler, false);
+      document.removeEventListener("keydown", ui_handler.key_down_handler, false);
+      document.removeEventListener("keyup", ui_handler.key_up_handler, false);
       current_level_number ++;
-      player = level.end_game();
-
-      level = levels[current_level_number].clone();
-      ui_handler = new UserInteractionHandler(level);
-      key_up_handler = ui_handler.key_up_handler_wrapper();
-      key_down_handler = ui_handler.key_down_handler_wrapper();
+      player = ui_handler.level.end_game();
+      // start next level
+      ui_handler = clone_and_start_level(levels[current_level_number], player);
     }else{
       console.log('game ends, no more level');
     }
-  }else if(game_end_status == -1){
+  }else if(game_end_status == 'restart'){
+    console.log('restarting level');
+    document.removeEventListener("keydown", ui_handler.key_down_handler, false);
+    document.removeEventListener("keyup", ui_handler.key_up_handler, false);
+    // start next level
+    ui_handler = clone_and_start_level(levels[current_level_number], player);
+  }
+  else if(game_end_status == 'lost'){
     console.log('game lost')
     ctx.save();
     ctx.font = "40px Arial";

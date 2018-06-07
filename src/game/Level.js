@@ -56,19 +56,21 @@ class Level{
   // -1: lost
   // 0: otherwise
   check_game_end(){
-    if(this.player.game_object.is_intersect_with(this.game_area.exits[0])){
-      return 1;
+    if(this.game_status != 'lost' 
+      && this.game_status != 'restart'
+      && this.player.game_object.is_intersect_with(this.game_area.exits[0])){
+      this.game_status = 'win';
     }
-    if(!this.game_area.in_game_area(this.player.game_object.x, this.player.game_object.y)){
-      return -1;
+    if(this.game_status != 'win' 
+      && this.game_status != 'restart'
+      && (!this.game_area.in_game_area(this.player.game_object.x, this.player.game_object.y) 
+         || Date.now() - this.start_time > this.time_limit)){
+      this.game_status = 'lost';
     }
-    if(Date.now() - this.start_time > this.time_limit){
-      return -1;
-    }
-    return 0;
   }
 
   end_game(){
+    this.player.clear_intersection();
     var tmp_player = this.player;
     this.player = undefined;
     this.ctx = undefined;

@@ -10,9 +10,6 @@ class Player {
     // engine_status:
     // ok, no_fuel, replacing_fuel
     this.engine_status = ENGINE_STATUS_OK;
-  }
-
-  init_default(){
     this.fuel_efficiency = 20;
     this.acceleration = 0.2;
     this.barrels_of_fuels = 0;
@@ -36,6 +33,10 @@ class Player {
 
   get_fuel_efficiency(){
     return this.fuel_efficiency;
+  }
+
+  clear_intersection(){
+    this.game_object.clear_intersection()
   }
 
   update(){

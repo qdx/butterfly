@@ -8,6 +8,8 @@ class UserInteractionHandler{
       "ArrowLeft": false,
       "ArrowRight": false
     };
+    this.key_up_handler = this.key_up_handler_wrapper();
+    this.key_down_handler = this.key_down_handler_wrapper();
   }
 
   key_up_handler_wrapper(){
@@ -53,8 +55,8 @@ class UserInteractionHandler{
       }else{
         switch(e.code){
           case "KeyR":
-            console.log("pressed r, shoudl reload game!");
-            //this.level = this.original_level.clone();
+            console.log("pressed r, should reload game!");
+            this.level.game_status = 'restart';
             break;
           case "Enter":
             break;
