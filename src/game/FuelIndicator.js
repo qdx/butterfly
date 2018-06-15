@@ -41,8 +41,6 @@ class FuelIndicator{
     this.ctx.restore();
 
     // fill the fuel bar with correct percentage
-    // TODO: should draw text: replacing fuel when replacing fuel
-    // should gradually refill the bar by percentage of replacement time passed
     let fill_percent = this.player.get_fuel_percent();
     this.ctx.save();
     this.ctx.beginPath();

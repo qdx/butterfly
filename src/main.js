@@ -59,10 +59,6 @@ function clone_and_start_level(level, player){
   return ui_handler;
 }
 
-function end_level(){
-
-}
-
 function mainLoopNew(){
   // start the game
   if(!ui_handler.level.start_time){

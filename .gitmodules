@@ -1,0 +1,3 @@
+[submodule "qdx.github.io"]
+	path = qdx.github.io
+	url = git@github.com:qdx/qdx.github.io.git
