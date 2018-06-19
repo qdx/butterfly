@@ -13,6 +13,16 @@ class Circle extends Geometry{
   clone(){
     return super.clone(new Circle(this.center.x, this.center.y, this.r));
   }
+  serialize(){
+    return {
+      "shape": "Circle",
+      "center": this.center,
+      "radius": this.r
+    };
+  }
+  to_json(){
+    return JSON.stringify(this.serialize());
+  }
   render(ctx, id=undefined){
     ctx.save();
     ctx.beginPath();

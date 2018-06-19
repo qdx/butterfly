@@ -1,7 +1,7 @@
 var Geometry = require('../geometry/Geometry.js');
 
 class GameObject{
-  constructor(collision_group, collision_body, display_body, moveable){
+  constructor(collision_group, collision_body, display_body, moveable=false){
     if(GameObject.id_counter === undefined){
       GameObject.id_counter = 1;
     }else{
@@ -20,17 +20,25 @@ class GameObject{
     this.moveable = moveable;
     this.pass_through = false;
 
-    if(collision_body.shape == Geometry.AABB){
-      this.x = collision_body.min.x;
-      this.y = collision_body.min.y;
-    }else if(collision_body.shape == Geometry.CIRCLE){
-      this.x = collision_body.center.x;
-      this.y = collision_body.center.y;
-    }
     this.intersect_with = [];
     this.impulse_resolved_with = [];
     this.a_x = 0;
     this.a_y = 0;
+  }
+
+  serialize(){
+    return {
+      "collision_group": this.collision_group,
+      "movable": this.moveable,
+      "collision_body": this.collision_body.serialize(),
+      "display_body": this.display_body.serialize(),
+      "id": this.id,
+      "pass_through": this.pass_through
+    };
+  }
+
+  to_json(){
+    return JSON.stringify(this.serialize());
   }
 
   clone(){
@@ -111,6 +119,17 @@ class GameObject{
 
   is_intersect_with(obj){
     return this.intersect_with.includes(obj);
+  }
+
+  render(ctx){
+    // TODO: use display_body for render from now on
+    // collision body and display body should always be there
+    // and should be 2 different game objects.
+    // display_body should anchor on collision_body, now what
+    // is implmeneted now, where collision_body and display_body
+    // share the same game object. This could cause major 
+    this.display_body.render(ctx, this.id)
+
   }
   // aabb should have:
   // min: {x: <>, y:<>}

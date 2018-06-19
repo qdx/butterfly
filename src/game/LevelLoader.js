@@ -20,6 +20,9 @@ class LevelLoader{
     return levels;
   }
 
+  level_from_json(json){
+  }
+
   static _load_level_0(id, ctx, width, height){
     var game_area = new GameArea(
       {"min_x":0,
@@ -31,7 +34,10 @@ class LevelLoader{
       CollisionDetector.C_GROUP1
     );
     var exit_circle = new Circle(500, 300, 10);
-    var exit_obj = new GameObject(CollisionDetector.C_GROUP1, exit_circle, undefined, false);
+    var exit_obj = new GameObject(
+      CollisionDetector.C_GROUP1,
+      exit_circle,
+      undefined);
     game_area.add_exit(exit_obj);
 
     var hud = new HUD(ctx, 0, 600, 600, 680);

@@ -29,6 +29,20 @@ class GameArea{
     }
   }
 
+  to_json(){
+    return JSON.stringify(this.serialize());
+  }
+
+  serialize(){
+    return {
+      "play_area": this.play_area,
+      "entries": this.entries,
+      "exits": this.exits.map(exit => exit.serialize()),
+      "collision_group": this.collision_group,
+      "have_border": this.have_border
+    }
+  }
+
   clone(){
     var cloned_entries = [];
     this.entries.forEach(function(entry){

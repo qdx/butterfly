@@ -15,6 +15,18 @@ class AABB extends Geometry{
     this.height = max_y - min_y;
   }
 
+  serialize(){
+    return {
+      "shape": "AABB",
+      "min": this.min,
+      "max": this.max
+    };
+  }
+
+  to_json(){
+    return JSON.stringify(this.serialize());
+  }
+
   clone(){
     return super.clone(new AABB(this.min_x, this.min_y, this.max_x, this.max_y));
   }

@@ -11,6 +11,19 @@ class Line extends Geometry{
     this.length = length;
   }
 
+  serialize(){
+    return {
+      "shape": "Line",
+      "parallel_to": this.parallel_to,
+      "pos": this.pos,
+      "length": this.length
+    };
+  }
+
+  to_json(){
+    return JSON.stringify(this.serialize());
+  }
+
   clone(){
     var cloned_line = super.clone(new Line(this.parallel_to, this.pos, this.length));
     return cloned_line;
