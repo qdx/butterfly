@@ -75,10 +75,7 @@ function mainLoopNew(){
     ui_handler.level.player.update();
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ui_handler.level.game_area.get_game_objects().forEach(function(obj){
-      obj.render(ctx);
-    });
-    ui_handler.level.hud.render();
+    ui_handler.level.render(ctx);
     ctx.restore();
   }
 

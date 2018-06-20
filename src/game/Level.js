@@ -78,6 +78,13 @@ class Level{
     this.game_status = 'ended';
     return tmp_player;
   }
+
+  render(ctx){
+    this.game_area.get_game_objects().forEach(function(obj){
+      obj.render(ctx);
+    });
+    this.hud.render();
+  }
 }
 
 module.exports = Level;

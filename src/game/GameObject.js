@@ -1,5 +1,21 @@
 var Geometry = require('../geometry/Geometry.js');
 
+// A game object should have:
+// 1. the display presentation, isolated from physical
+//    the display shape or image
+//    clonable
+// 2. the physcial presentation, isolated from display
+//    all physical properties:
+//      * position
+//      * speed
+//      * acceleration
+//      * collision body/shape
+//      * collision group
+//      * an id
+//      * can be cloned, with new id
+//      * mass
+//      * collision_resolve_strategy
+//
 class GameObject{
   constructor(collision_group, collision_body, display_body, moveable=false){
     if(GameObject.id_counter === undefined){
@@ -10,13 +26,7 @@ class GameObject{
     this.id = GameObject.id_counter;
     this.collision_group = collision_group;
     this.collision_body = collision_body;
-    //if(display_body.type == "geometry"){
-      //this.display_body = display_body;
-    //}else{
-    // TODO: should I keep display body separate from collision body?
-    // FIXME: should not always do this:
-      this.display_body = collision_body;
-    //}
+    this.display_body = collision_body;
     this.moveable = moveable;
     this.pass_through = false;
 

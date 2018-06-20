@@ -1,0 +1,46 @@
+{
+    "game_area": {
+        "boundary": {
+            "collision_group": 1,
+            "max_x": 600,
+            "max_y": 600,
+            "min_x": 0,
+            "min_y": 0
+        },
+        "entries": [
+            {
+                "v_x": 0.1,
+                "v_y": 0,
+                "x": 30,
+                "y": 300
+            }
+        ],
+        "exits": [
+            {
+                "collision_body": {
+                    "center": {
+                        "x": 500,
+                        "y": 300
+                    },
+                    "radius": 10,
+                    "type": "Circle"
+                },
+                "collision_group": 1,
+                "display_body": {
+                    "center": {
+                        "x": 500,
+                        "y": 300
+                    },
+                    "radius": 10,
+                    "type": "Circle"
+                }
+            }
+        ]
+    },
+    "hud": {
+        "max_x": 600,
+        "max_y": 680,
+        "min_x": 0,
+        "min_y": 600
+    }
+}

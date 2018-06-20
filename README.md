@@ -11,3 +11,8 @@ https://qdx.github.io/
 ### How to play
 Use arrow keys to guide the black ball to the red circle before time runs out.
 
+### Notes
+To help debug, start node repl, use command
+`.load 'src/preload.js'`
+to load all the modules and play with them
+
