@@ -1,0 +1,10 @@
+graph TD
+A[UserInteractionHandler] -->|Produce| B(key_up_listener)
+A -->|Produce| C(key_down_listener)
+B -->|Manipulate| D[Level]
+C -->|Manipulate| D[Level]
+B -->|Listen| E(document)
+C -->|Listen| E
+style E fill:#f9f,stroke:#333,stroke-width:4px
+style B stroke-dasharray: 5, 5;
+style C stroke-dasharray: 5, 5;
