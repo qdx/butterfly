@@ -1,9 +1,12 @@
-graph TD
+graph LR
 A[UserInteractionHandler] -->|Has a| B[Level]
 B -->|Has a| C[Player]
 C -->|Has a| J[GameObject]
 B -->|Has a| F[HUD]
+F-->|Has a| K[FuelIndicator]
+K -->|Has a| C[Player]
+F-->|Has a| L[TimeIndicator]
 B -->|Has a| G[GameArea]
 G --> |Has many| H[GameObject]
-F --> |Has a| C[Player]
+
 I[LevelLoader] --> |Produce| B

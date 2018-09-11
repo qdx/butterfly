@@ -1,0 +1,7 @@
+graph TD
+A[Level.render] -->|call| B[GameArea.get_game_objects] 
+B-->|foreach: call| F[GameObject.render]
+A -->|call| C[HUD.render]
+C -->|call| D[FuelIndicator.render]
+
+C -->|call| E[TimeIndicator.render]
