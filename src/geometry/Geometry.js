@@ -1,6 +1,8 @@
-const LINE = 1;
+const AALINE = 1;
 const AABB = 2;
 const CIRCLE = 3;
+const POINT = 4;
+const LINE = 5;
 
 class Geometry{
   constructor(shape){
@@ -41,6 +43,8 @@ class Geometry{
 }
 
 module.exports = Geometry;
-module.exports.LINE = LINE;
+module.exports.AALINE = AALINE;
 module.exports.AABB = AABB;
 module.exports.CIRCLE = CIRCLE;
+module.exports.POINT = POINT;
+module.exports.LINE = LINE;

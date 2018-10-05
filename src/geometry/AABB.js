@@ -13,6 +13,7 @@ class AABB extends Geometry{
     this.max.y = max_y;
     this.width = max_x - min_x;
     this.height = max_y - min_y;
+    Object.freeze(this);
   }
 
   serialize(){

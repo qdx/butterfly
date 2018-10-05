@@ -6,9 +6,6 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var rimraf = require('rimraf');
 
-gulp.task('dex', function(){
-  console.log('dexin is playing with gulp');
-});
 
 gulp.task('clean', function(c){
   rimraf('./dist', c);
@@ -25,7 +22,6 @@ gulp.task('build', function(){
   //.pipe(sourcemaps.write())
     .pipe(gulp.dest('dist'));
 });
-
 
 gulp.task('release', function(){
   gulp.src('src/main.html')
@@ -49,4 +45,26 @@ gulp.task('serve', function() {
     }));
 });
 
+// tasks for view render test
+gulp.task('build-render-test', function(){
+  gulp.src('src/render_test.html').pipe(gulp.dest('dist'));
+  return browserify({
+    entries: './src/render_test.js', 
+    debug: true
+  }).bundle()
+    .pipe(source('render_test_bundle.js'))
+  //.pipe(sourcemaps.init())
+  //.pipe(sourcemaps.write())
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('serve-render-test', function() {
+  gulp.src('dist')
+    .pipe(webserver({
+      fallback: 'render_test.html',
+      livereload: true
+    }));
+});
+
 gulp.task('default', ['clean', 'build', 'serve']);
+gulp.task('render-test', ['clean', 'build-render-test', 'serve-render-test']);
