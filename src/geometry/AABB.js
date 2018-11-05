@@ -1,5 +1,4 @@
 var Geometry = require('./Geometry.js');
-var CollisionDetector = require('../physics/CollisionDetector.js');
 var MyDebug = require('../MyDebug.js');
 
 class AABB extends Geometry{
