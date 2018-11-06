@@ -16,3 +16,5 @@ To help debug, start node repl, use command
 `.load 'src/preload.js'`
 to load all the modules and play with them
 
+To test run:
+`npm test`

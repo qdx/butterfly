@@ -12,7 +12,19 @@ class AABB extends Geometry{
     this.max.y = max_y;
     this.width = max_x - min_x;
     this.height = max_y - min_y;
+    this.center = {};
+    this.center.x = (this.min.x + this.max.x) / 2;
+    this.center.y = (this.min.y + this.max.y) / 2;
     Object.freeze(this);
+  }
+
+  contains_point(p){
+    return this.min.x <= p.x && p.x <= this.max.x
+    && this.min.y <= p.y && p.y <= this.max.y;
+  }
+
+  get_center(){
+    return this.center;
   }
 
   serialize(){
